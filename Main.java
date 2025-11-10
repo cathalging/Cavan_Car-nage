@@ -141,15 +141,19 @@ public class Main {
             opponent.dropInventory();
 
             if (opponent instanceof  NPC) {
-                System.out.println(((NPC) opponent).getDeathMessage());
+                System.out.println(opponent.getName() + ": " + ((NPC) opponent).getDeathMessage());
                 opponent.setCurrentRoom(heaven);
             }
             System.out.println(opponent.getName() + " has died.");
             return;
         }
-
         System.out.println("Opponent Health: " + opponent.getHealth());
 
+        if (opponent instanceof NPC) {
+            ((NPC) opponent).onHit(character);
+            System.out.println(opponent.getName() + " attacked you for " + opponent.getDamage());
+        }
+        System.out.println("Your health: " + character.getHealth());
     }
 
     private void consumeItem(Command command) {

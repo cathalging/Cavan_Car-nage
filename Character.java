@@ -4,15 +4,15 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Character {
-    private String name;
-    private int health;
-    private int damage;
+    protected String name;
+    protected int health;
+    protected int damage;
 
-    private Room currentRoom;
-    private ArrayList<Item> inventory = new ArrayList<>();
+    protected Room currentRoom;
+    protected ArrayList<Item> inventory = new ArrayList<>();
 
-    private HashMap<Effect, Integer> effects = new HashMap<>();
-    public static HashMap<Effect, String> effectDescription = new HashMap<>();
+    protected HashMap<Effect, Integer> effects = new HashMap<>();
+    protected static HashMap<Effect, String> effectDescription = new HashMap<>();
     static {
         effectDescription.put(Effect.LANGERS, "Langers: You are out of your mind, what a lightweight.");
         effectDescription.put(Effect.NOTIONS, "Notions: You have an air of confidence about you.");

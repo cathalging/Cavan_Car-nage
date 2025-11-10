@@ -18,4 +18,8 @@ public class NPC extends Character {
     public String getDeathMessage() {
         return "I am dead.";
     }
+
+    public void onHit(Character character) {
+        character.takeHit(damage);
+    }
 }
