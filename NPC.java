@@ -1,4 +1,19 @@
-public class NPC extends Character {
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
+
+public abstract class NPC extends Character {
+    protected String filePath = "dialogue/" + name + ".txt";
+
+    protected enum Emotion {
+        NEUTRAL,
+        HAPPY,
+        ANGRY
+    }
+
+    protected Emotion state = Emotion.NEUTRAL;
+
     public NPC(String name, Room startingRoom, int health, int damage, Item... items) {
         super(name, startingRoom, health, damage);
 
@@ -7,19 +22,17 @@ public class NPC extends Character {
         }
     }
 
-    public void death() {
-        dropInventory();
+    protected void setState(Emotion state) {
+        this.state = state;
     }
 
-    public void onHit() {
-        System.out.println("Oof");
-    }
+    abstract public void onDeath();
 
-    public String getDeathMessage() {
-        return "I am dead.";
-    }
+    abstract protected int getDialogueOption();
 
-    public void onHit(Character character) {
-        character.takeHit(damage);
-    }
+    abstract public String getDialogue();
+
+    abstract public String getDeathMessage();
+
+    abstract public void onHit(Character character);
 }

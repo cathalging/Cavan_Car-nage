@@ -7,13 +7,30 @@ public class CommandWords {
     public CommandWords() {
         validCommands = new HashMap<>();
         validCommands.put("go", "Move to another room");
+        validCommands.put("move", "Move to another room");
+
         validCommands.put("quit", "End the game");
         validCommands.put("help", "Show help");
-        validCommands.put("consume", "Consume an Item");
+
+        validCommands.put("consume", "Consume an item");
+        validCommands.put("drink", "Consume an item");
+        validCommands.put("eat", "Consume an item");
+
         validCommands.put("take", "Pick up an item");
+        validCommands.put("pickup", "Pick up an item");
+
         validCommands.put("place", "Place an item in current room");
+        validCommands.put("drop", "Place an item in current room");
+
         validCommands.put("inventory", "Show your inventory");
+
         validCommands.put("hit", "Hit a fella");
+        validCommands.put("fight", "Hit a fella");
+
+        validCommands.put("talk", "Talk to someone");
+        validCommands.put("speak", "Talk to someone");
+
+        validCommands.put("save", "Saves the game");
     }
 
     public boolean isCommand(String commandWord) {

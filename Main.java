@@ -12,16 +12,20 @@ Help system: Lists valid commands to guide the player.
 Overall, it recreates the classic Zork interactive fiction experience with a university-themed setting, 
 emphasizing exploration and simple command-driven gameplay
 */
+
+import java.io.*;
 import java.util.ArrayList;
 
 public class Main {
     private Parser parser;
     private Character player;
-    private NPC npc;
+    private NPC oldMan;
 
-    private Room pub, mainstreet, heaven;
+    private Room pubFront, pubBack, mainstreet, postOffice, church, townSquare, townHall, shop, park, river, cave, estate, abandonedCottage, forest, heaven;
     private Item stick;
     private Consumable pint;
+
+    File file = new File("player.ser");
 
     public Main() {
         createRooms();
@@ -31,29 +35,86 @@ public class Main {
     }
 
     public void createObjects() {
-        pint = new Consumable("Pint", "A creamy pint of Guinness", pub, Character.Effect.LANGERS);
-        stick = new Item("Stick", "Brown and sticky", npc);
+        pint = new Consumable("Pint", "A creamy pint of Guinness", pubFront, Character.Effect.LANGERS);
+        stick = new Item("Stick", "Brown and sticky", oldMan);
     }
 
     private void createRooms() {
         // create rooms
-        mainstreet = new Room("outside the main entrance of the university");
-        pub = new Room("in the campus pub");
-        heaven = new Room("in heaven");
+        postOffice = new Room("Post Office", "inside the town's small post office");
+        mainstreet = new Room("Main Street", "walking along the town's main street");
+        church = new Room("Church", "standing inside a quiet stone church");
+        pubFront = new Room("Pub Front", "at the lively front of the pub");
+        pubBack = new Room("Pub Back", "in the dim back room of the pub");
+        townSquare = new Room("Town Square", "in the town square with its central fountain");
+        townHall = new Room("Town Hall", "inside the town hall with tall pillars");
+        shop = new Room("Shop", "in the general shop full of supplies");
+        park = new Room("Park", "in the peaceful green park");
+        estate = new Room("Estate", "on the grounds of an old estate");
+        cave = new Room("Cave", "inside a dark echoing cave");
+        abandonedCottage = new Room("Abandoned Cottage", "near an abandoned, vine-covered cottage");
+        river = new Room("River", "beside a flowing river and footbridge");
+        forest = new Room("Forest", "within a dense, towering forest");
 
-        // initialise room exits
-        mainstreet.setExit(Character.Direction.WEST, pub);
 
-        pub.setExit(Character.Direction.EAST, mainstreet);
+        // Set Exits
+        postOffice.setExit(Character.Direction.SOUTH, mainstreet);
+        mainstreet.setExit(Character.Direction.NORTH, postOffice);
+
+        mainstreet.setExit(Character.Direction.WEST, church);
+        church.setExit(Character.Direction.EAST, mainstreet);
+
+        mainstreet.setExit(Character.Direction.SOUTH, townSquare);
+        townSquare.setExit(Character.Direction.NORTH, mainstreet);
+
+        mainstreet.setExit(Character.Direction.EAST, pubFront);
+        pubFront.setExit(Character.Direction.WEST, mainstreet);
+
+        pubFront.setExit(Character.Direction.EAST, pubBack);
+        pubBack.setExit(Character.Direction.WEST, pubFront);
+
+        townSquare.setExit(Character.Direction.WEST, townHall);
+        townHall.setExit(Character.Direction.EAST, townSquare);
+
+        townSquare.setExit(Character.Direction.EAST, shop);
+        shop.setExit(Character.Direction.WEST, townSquare);
+
+        townSquare.setExit(Character.Direction.SOUTH, park);
+        park.setExit(Character.Direction.NORTH, townSquare);
+
+        park.setExit(Character.Direction.WEST, estate);
+        estate.setExit(Character.Direction.EAST, park);
+
+        estate.setExit(Character.Direction.SOUTH, abandonedCottage);
+        abandonedCottage.setExit(Character.Direction.NORTH, estate);
+
+        park.setExit(Character.Direction.SOUTH, river);
+        river.setExit(Character.Direction.NORTH, park);
+
+        park.setExit(Character.Direction.EAST, cave);
+        cave.setExit(Character.Direction.WEST, park);
+
+        cave.setExit(Character.Direction.SOUTH, forest);
+        forest.setExit(Character.Direction.NORTH, cave);
+
+        river.setExit(Character.Direction.EAST, forest);
+        forest.setExit(Character.Direction.WEST, river);
     }
 
     public void createCharacters() {
-        // create the player character and start outside
-        player = new Character("player", mainstreet, 100, 10);
-
-        npc = new NPC("npc", pub, 100, 10, stick);
-        pub.addCharacter(npc);
+        if (file.exists()) {
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("player.ser"))) {
+                player = (Character) in.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        } else {
+            player = new Character("player", townSquare, 100, 50);
+        }
+        oldMan = new OldMan("Old Man", townSquare, 100, 10, stick);
+        townSquare.addCharacter(oldMan);
     }
+
     public void play() {
         printWelcome();
 
@@ -63,6 +124,15 @@ public class Main {
             finished = processCommand(command);
         }
         System.out.println("Thank you for playing. Goodbye.");
+    }
+
+    private void savePlayer() {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("player.ser"))) {
+            out.writeObject(player);
+            System.out.println("Saved");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void printWelcome() {
@@ -88,7 +158,7 @@ public class Main {
             case "go", "move":
                 goRoom(command, player);
                 break;
-            case "take":
+            case "take", "pickup":
                 takeItem(command);
                 break;
             case "place", "drop":
@@ -102,6 +172,12 @@ public class Main {
                 break;
             case "hit", "fight":
                 attack(command, player);
+                break;
+            case "talk", "speak":
+                talk(command);
+                break;
+            case "save":
+                savePlayer();
                 break;
             case "quit":
                 if (command.hasSecondWord()) {
@@ -123,12 +199,12 @@ public class Main {
             return;
         }
 
-        String opponentName = command.getSecondWord();
+        String opponentName = command.getSecondWord().toLowerCase();
         ArrayList<Character> roomCharacters = character.getCurrentRoom().getCharacters();
 
         Character opponent = null;
         for (Character roomCharacter : roomCharacters) {
-            if (roomCharacter.getName().equals(opponentName)) {
+            if (roomCharacter.getName().toLowerCase().equals(opponentName)) {
                 opponent = roomCharacter;
             }
         }
@@ -136,17 +212,22 @@ public class Main {
             System.out.println("Character " + opponentName + " does not exist");
             return;
         }
+
         opponent.takeHit(character.getDamage());
+
+
         if (opponent.getHealth() <= 0) {
             opponent.dropInventory();
 
-            if (opponent instanceof  NPC) {
+            if (opponent instanceof NPC) {
                 System.out.println(opponent.getName() + ": " + ((NPC) opponent).getDeathMessage());
                 opponent.setCurrentRoom(heaven);
             }
             System.out.println(opponent.getName() + " has died.");
+            character.getCurrentRoom().removeCharacter(opponent);
             return;
         }
+
         System.out.println("Opponent Health: " + opponent.getHealth());
 
         if (opponent instanceof NPC) {
@@ -156,6 +237,30 @@ public class Main {
         System.out.println("Your health: " + character.getHealth());
     }
 
+    private void talk(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Talk to who?");
+            return;
+        }
+
+        String npcName = command.getSecondWord().toLowerCase();
+        ArrayList<Character> roomCharacters = player.getCurrentRoom().getCharacters();
+
+        Character npc = null;
+        for (Character roomCharacter : roomCharacters) {
+            if (roomCharacter.getName().toLowerCase().equals(npcName)) {
+                npc = roomCharacter;
+            }
+        }
+        if (npc == null) {
+            System.out.println(npcName + " does not exist");
+            return;
+        }
+
+        if (npc instanceof NPC) {
+            System.out.println(((NPC) npc).getDialogue());
+        }
+    }
     private void consumeItem(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Consume what?");
@@ -165,7 +270,7 @@ public class Main {
         String itemName = command.getSecondWord();
         Item[] items = player.getInventory().toArray(new Item[0]);
 
-        for (Item item: items) {
+        for (Item item : items) {
             if (item.getName().equalsIgnoreCase(itemName) && item instanceof Consumable consumable) {
                 if (player.addEffect(consumable.getEffect())) {
                     player.removeInventoryItem(item);
@@ -183,9 +288,9 @@ public class Main {
     private void showInventory() {
         ArrayList<Item> items = player.getInventory();
         System.out.println("Inventory:");
-        for (Item item: items.toArray(new Item[0])) {
+        for (Item item : items.toArray(new Item[0])) {
             System.out.println(item.getName() + ":\n" + item.getDescription());
-        };
+        }
     }
 
     private void placeItem(Command command) {
@@ -198,7 +303,7 @@ public class Main {
 
         ArrayList<Item> items = player.getInventory();
 
-        for (Item item: items) {
+        for (Item item : items) {
             if (item.getName().equalsIgnoreCase(itemName)) {
                 player.removeInventoryItem(item);
                 currentRoom.addItem(item);
@@ -218,7 +323,7 @@ public class Main {
 
         ArrayList<Item> items = player.getCurrentRoom().getItems();
 
-        for (Item item: items) {
+        for (Item item : items) {
             if (item.getName().equalsIgnoreCase(itemName)) {
                 player.addInventoryItem(item);
                 player.getCurrentRoom().removeItem(item);
@@ -247,35 +352,36 @@ public class Main {
         Character.Direction direction;
         directionStr = command.getSecondWord().toLowerCase();
 
-        switch (directionStr) {
-            case "north":
-                direction = Character.Direction.NORTH;
-                break;
-            case "south":
-                direction = Character.Direction.SOUTH;
-                break;
-            case "east":
-                direction = Character.Direction.EAST;
-                break;
-            case "west":
-                direction = Character.Direction.WEST;
-                break;
-            default:
-                direction = null;
-        }
+        // Enhanced Switch
+        direction = switch (directionStr) {
+            case "north" -> Character.Direction.NORTH;
+            case "south" -> Character.Direction.SOUTH;
+            case "east" -> Character.Direction.EAST;
+            case "west" -> Character.Direction.WEST;
+            default -> null;
+        };
 
         if (direction == null) {
             System.out.println("There is no door!\n");
         } else {
             character.move(direction);
+
+            // Room Info
             System.out.println(character.getCurrentRoom().getLongDescription());
+
+            // Player Info
             if (!character.getEffects().isEmpty()) {
                 System.out.println("Your Current Effects:");
-                for (Character.Effect effect: character.getEffects()) {
+                for (Character.Effect effect : character.getEffects()) {
                     System.out.println(Character.effectDescription.get(effect));
                     System.out.println();
                 }
+            }
 
+            for (Character person : character.getCurrentRoom().getCharacters()) {
+                if (person instanceof NPC) {
+                    System.out.println(person.getName() + ": " + ((NPC) person).getDialogue());
+                }
             }
         }
     }

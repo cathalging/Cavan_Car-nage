@@ -1,9 +1,10 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Character {
+public class Character implements Serializable {
     protected String name;
     protected int health;
     protected int damage;
@@ -29,6 +30,7 @@ public class Character {
         this.health = health;
         this.damage = damage;
     }
+
     enum Effect {
         LANGERS,
         NOTIONS
