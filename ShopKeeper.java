@@ -1,27 +1,52 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class OldMan extends NPC{
-    public OldMan(String name, Room startingRoom, int health, int damage, Item... items) {
+public class ShopKeeper extends NPC {
+    static private ArrayList<Item> shopItems = new ArrayList<>();
+
+    public ShopKeeper(String name, Room startingRoom, int health, int damage, Item... items) {
         super(name, startingRoom, health, damage, items);
+    }
+
+    public ShopKeeper() {
+        super();
+    }
+
+    public ArrayList<Item> getShopItems() {
+        return shopItems;
+    }
+
+    public void addShopItems(Item... items) {
+        Collections.addAll(shopItems, items);
+    }
+
+    public void removeShopItem(Item item) {
+        shopItems.remove(item);
     }
 
     @Override
     public String getDescription() {
-        return "An old man stands on the footpath.";
+        return "";
+    }
+
+    @Override
+    public void onDeath() {
+
     }
 
     @Override
     protected int getDialogueOption() {
         if (state == Emotion.ANGRY)
-            return ThreadLocalRandom.current().nextInt(6, 9);
-        else if (state == Emotion.HAPPY)
-            return ThreadLocalRandom.current().nextInt(11, 13);
+            return ThreadLocalRandom.current().nextInt(6, 8);
+        //else if (state == Emotion.HAPPY)
+        //  return ThreadLocalRandom.current().nextInt(11, 13);
         else //Neutral
             return ThreadLocalRandom.current().nextInt(2, 4);
-
     }
 
     @Override
@@ -46,18 +71,13 @@ public class OldMan extends NPC{
     }
 
     @Override
-    public void onDeath() {
-        dropInventory();
-    }
-
-    @Override
     public String getDeathMessage() {
-        return "Ah you've killed me aye. An Old Man.";
+        return "How did you beat me?";
     }
 
     @Override
     public void onHit(Character character) {
+        character.takeHit(damage);
         setState(Emotion.ANGRY);
-        System.out.println(getName() +  ": " + getDialogue());
     }
 }

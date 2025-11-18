@@ -19,12 +19,14 @@ import java.util.ArrayList;
 public class Main {
     private Parser parser;
     private Character player;
-    private NPC oldMan;
+    private NPC oldMan, shopKeeper;
 
     private Room pubFront, pubBack, mainstreet, postOffice, church, townSquare, townHall, shop, park, river, cave, estate, abandonedCottage, forest, heaven;
-    private Item stick;
+    private Item engineOil;
     private Consumable pint;
+    private Part keys, wheels, headlights, sparkPlug;
 
+    private ShopKeeper shopController = new ShopKeeper();
     File file = new File("player.ser");
 
     public Main() {
@@ -35,8 +37,17 @@ public class Main {
     }
 
     public void createObjects() {
-        pint = new Consumable("Pint", "A creamy pint of Guinness", pubFront, Character.Effect.LANGERS);
-        stick = new Item("Stick", "Brown and sticky", oldMan);
+        // Consumables
+        pint = new Consumable("Pint", "A creamy pint of Guinness", pubFront, Effect.LANGERS);
+
+        // Shop Items
+        shopController.addShopItems(new Item("Engine Oil", "A bottle of engine oil from 1977", 5));
+
+        // Parts
+        keys = new Part("Keys", "The keys to your car", shop);
+        wheels = new Part("Wheels", "The wheels on your car go around and around", shop);
+        headlights = new Part("Headlights", "The headlights for your car", shop);
+        sparkPlug = new Part("Spark Plug", "A spark plug for your car", shop);
     }
 
     private void createRooms() {
@@ -102,6 +113,7 @@ public class Main {
     }
 
     public void createCharacters() {
+        // Player
         if (file.exists()) {
             try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("player.ser"))) {
                 player = (Character) in.readObject();
@@ -111,8 +123,13 @@ public class Main {
         } else {
             player = new Character("player", townSquare, 100, 50);
         }
-        oldMan = new OldMan("Old Man", townSquare, 100, 10, stick);
+
+        // NPCS
+        oldMan = new OldMan("Old Man", townSquare, 100, 10);
         townSquare.addCharacter(oldMan);
+
+        shopKeeper = new ShopKeeper("Shop Keeper", shop, 100000, 10000);
+        shop.addCharacter(shopKeeper);
     }
 
     public void play() {
@@ -137,7 +154,7 @@ public class Main {
 
     private void printWelcome() {
         System.out.println();
-        System.out.println("Welcome to the University adventure!");
+        System.out.println("Your car splutters to a stop in the middle of Cavan Town. You look at the dash and see a light to change engine oil. Thankfully you see a shop to the east.");
         System.out.println("Type 'help' if you need help.");
         System.out.println();
         System.out.println(player.getCurrentRoom().getLongDescription());
@@ -176,6 +193,18 @@ public class Main {
             case "talk", "speak":
                 talk(command);
                 break;
+            case "use":
+                use(command);
+                break;
+            case "drive":
+                drive(command);
+                break;
+            case "shop":
+                shop();
+                break;
+            case "buy":
+                buy(command);
+                break;
             case "save":
                 savePlayer();
                 break;
@@ -191,6 +220,88 @@ public class Main {
                 break;
         }
         return false;
+    }
+
+    private void buy(Command command) {
+        if (!player.getCurrentRoom().equals(shop)) {
+            System.out.println("You are not in the shop.");
+            return;
+        }
+
+        if (!command.hasSecondWord()) {
+            System.out.println("Buy what?");
+            return;
+        }
+
+        String itemName = command.getSecondWord();
+        ArrayList<Item> items = shopController.getShopItems();
+
+        for (Item item : items) {
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                if (player.getMoney() >= item.getValue()) {
+                    player.setMoney(player.getMoney() - item.getValue());
+                    player.addInventoryItem(item);
+                    System.out.println("You bought " + item.getName() + " for " + item.getValue());
+                } else {
+                    System.out.println("You don't have enough money.");
+                }
+            } else {
+                System.out.println("Item does not exist.");
+            }
+        }
+    }
+
+    private void shop() {
+        if (player.getCurrentRoom().equals(shop)) {
+            System.out.println("Item:\t\tPrice:");
+            for (Item item: ((ShopKeeper) shopKeeper).getShopItems()) {
+                System.out.println(item.getName() + "\t" + item.getValue());
+            }
+        } else {
+            System.out.println("You are not in the shop.");
+        }
+    }
+
+    private void drive(Command command) {
+        if (!player.getCurrentRoom().equals(townSquare)) {
+            System.out.println("Your car is in the town square.");
+            return;
+        }
+        if (!Car.fixed()) {
+            System.out.println("Your car is still missing parts.");
+            return;
+        }
+        System.out.println("You start your car, and escape from Cavan. You win.");
+    }
+
+    private void use(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Use what?");
+            return;
+        }
+
+        String itemName = command.getSecondWord().toLowerCase();
+        ArrayList<Item> playerItems = player.getInventory();
+
+        Item item = null;
+        for (Item invItem : playerItems) {
+            if (invItem.getName().toLowerCase().equals(itemName)) {
+                item = invItem;
+            }
+        }
+
+        if (item == null) {
+            System.out.println("Item not found");
+        } else if (item instanceof Consumable) {
+            consumeItem(command);
+        } else if (item instanceof Part) {
+            if (player.getCurrentRoom().equals(townSquare)) {
+                Car.addPart(item);
+                System.out.println("You put the " + item.getName() + " in your car.");
+            } else {
+                System.out.println("Your car is in the town square");
+            }
+        }
     }
 
     private void attack(Command command, Character character) {
@@ -261,6 +372,7 @@ public class Main {
             System.out.println(((NPC) npc).getDialogue());
         }
     }
+
     private void consumeItem(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Consume what?");
@@ -372,15 +484,9 @@ public class Main {
             // Player Info
             if (!character.getEffects().isEmpty()) {
                 System.out.println("Your Current Effects:");
-                for (Character.Effect effect : character.getEffects()) {
+                for (Effect effect : character.getEffects()) {
                     System.out.println(Character.effectDescription.get(effect));
                     System.out.println();
-                }
-            }
-
-            for (Character person : character.getCurrentRoom().getCharacters()) {
-                if (person instanceof NPC) {
-                    System.out.println(person.getName() + ": " + ((NPC) person).getDialogue());
                 }
             }
         }

@@ -30,6 +30,13 @@ public class CommandWords {
         validCommands.put("talk", "Talk to someone");
         validCommands.put("speak", "Talk to someone");
 
+        validCommands.put("use", "Use something");
+
+        validCommands.put("drive", "Drive your car");
+
+        validCommands.put("shop", "Shows the shop items");
+        validCommands.put("buy", "Buy an item");
+
         validCommands.put("save", "Saves the game");
     }
 

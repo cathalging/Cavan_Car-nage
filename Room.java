@@ -64,19 +64,19 @@ public class Room implements Serializable {
     }
 
     public String getLongDescription() {
-        StringBuilder msg = new StringBuilder("You are " + description + ".\nExits: " + getExitString());
+        StringBuilder msg = new StringBuilder("You are " + description);
         if (!items.isEmpty()) {
-            msg.append("\nItems: ");
             for (Item item : items) {
-                msg.append(item.getName() + " ");
+                msg.append(item.getDescription() + "\n");
             }
         }
         if (!characters.isEmpty()) {
-            msg.append("\nCharacters: ");
             for (Character character : characters) {
-                msg.append(character.getName() + " ");
+                if (character instanceof NPC)
+                    msg.append("\n" + ((NPC) character).getDescription());
             }
         }
+        msg.append("\nExits:\n" + getExitString());
         return msg.toString();
     }
 }

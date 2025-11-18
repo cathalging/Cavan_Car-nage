@@ -22,9 +22,15 @@ public abstract class NPC extends Character {
         }
     }
 
+    public NPC() {
+        super();
+    }
+
     protected void setState(Emotion state) {
         this.state = state;
     }
+
+    abstract public String getDescription();
 
     abstract public void onDeath();
 
