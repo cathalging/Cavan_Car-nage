@@ -18,16 +18,19 @@ import java.util.ArrayList;
 
 public class Main {
     private Parser parser;
-    private Character player;
-    private NPC oldMan, shopKeeper;
+    private Player player;
+    private NPC oldMan, shopKeeper, turfKing, turfMinion1, turfMinion2, squirrel;
 
-    private Room pubFront, pubBack, mainstreet, postOffice, church, townSquare, townHall, shop, park, river, cave, estate, abandonedCottage, forest, heaven;
+    private Room pubFront, pubBack, mainstreet, postOffice, church, townSquare, townHall, shop, park, river, cave, estate, bog, forest, heaven;
     private Item engineOil;
     private Consumable pint;
+    private Weapon stick;
     private Part keys, wheels, headlights, sparkPlug;
 
     private ShopKeeper shopController = new ShopKeeper();
     File file = new File("player.ser");
+
+    boolean finished = false;
 
     public Main() {
         createRooms();
@@ -40,12 +43,16 @@ public class Main {
         // Consumables
         pint = new Consumable("Pint", "A creamy pint of Guinness", pubFront, Effect.LANGERS);
 
+        // Weapons
+        stick = new Weapon("Stick", "A pointy stick", turfMinion1, 20);
+
         // Shop Items
-        shopController.addShopItems(new Item("Engine Oil", "A bottle of engine oil from 1977", 5));
+        shopController.addShopItems(new Item("Engine Oil", "A bottle of engine oil from 1977", 5),
+                new Item("Nuts", "Roasted Peanuts", 2));
 
         // Parts
         keys = new Part("Keys", "The keys to your car", shop);
-        wheels = new Part("Wheels", "The wheels on your car go around and around", shop);
+        wheels = new Part("Wheels", "The wheels on your car go around and around", turfKing);
         headlights = new Part("Headlights", "The headlights for your car", shop);
         sparkPlug = new Part("Spark Plug", "A spark plug for your car", shop);
     }
@@ -63,7 +70,7 @@ public class Main {
         park = new Room("Park", "in the peaceful green park");
         estate = new Room("Estate", "on the grounds of an old estate");
         cave = new Room("Cave", "inside a dark echoing cave");
-        abandonedCottage = new Room("Abandoned Cottage", "near an abandoned, vine-covered cottage");
+        bog = new Room("Abandoned Cottage", "in a bog land.");
         river = new Room("River", "beside a flowing river and footbridge");
         forest = new Room("Forest", "within a dense, towering forest");
 
@@ -96,8 +103,8 @@ public class Main {
         park.setExit(Character.Direction.WEST, estate);
         estate.setExit(Character.Direction.EAST, park);
 
-        estate.setExit(Character.Direction.SOUTH, abandonedCottage);
-        abandonedCottage.setExit(Character.Direction.NORTH, estate);
+        estate.setExit(Character.Direction.SOUTH, bog);
+        bog.setExit(Character.Direction.NORTH, estate);
 
         park.setExit(Character.Direction.SOUTH, river);
         river.setExit(Character.Direction.NORTH, park);
@@ -116,12 +123,12 @@ public class Main {
         // Player
         if (file.exists()) {
             try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("player.ser"))) {
-                player = (Character) in.readObject();
+                player = (Player) in.readObject();
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         } else {
-            player = new Character("player", townSquare, 100, 50);
+            player = new Player("player", townSquare, 100, 20);
         }
 
         // NPCS
@@ -130,12 +137,23 @@ public class Main {
 
         shopKeeper = new ShopKeeper("Shop Keeper", shop, 100000, 10000);
         shop.addCharacter(shopKeeper);
+
+        turfKing = new TurfKing("Turf King", bog, 200, 5);
+        turfMinion1 = new TurfMinion("Turf Minion 1", bog, 50, 10, "The first stands wielding a stick.", (TurfKing) turfKing);
+        turfMinion2 = new TurfMinion("Turf Minion 2", bog, 50, 10, "The second raises his fists as you approach.", (TurfKing) turfKing);
+        bog.addCharacter(turfKing);
+        bog.addCharacter(turfMinion1);
+        bog.addCharacter(turfMinion2);
+        
+        squirrel = new Squirrel("Squirrel", forest);
+        forest.addCharacter(squirrel);
+        ((Squirrel) squirrel).setItemWantedName("Nuts");
+        ((Squirrel) squirrel).setItemOffered(new Item("Drink Voucher", "A drink voucher for the local pub", squirrel));
     }
 
     public void play() {
         printWelcome();
 
-        boolean finished = false;
         while (!finished) {
             Command command = parser.getCommand();
             finished = processCommand(command);
@@ -188,7 +206,7 @@ public class Main {
                 consumeItem(command);
                 break;
             case "hit", "fight":
-                attack(command, player);
+                attack(command);
                 break;
             case "talk", "speak":
                 talk(command);
@@ -205,6 +223,9 @@ public class Main {
             case "buy":
                 buy(command);
                 break;
+            case "trade", "offer":
+                trade(command);
+                break;
             case "save":
                 savePlayer();
                 break;
@@ -220,6 +241,49 @@ public class Main {
                 break;
         }
         return false;
+    }
+
+    private void trade(Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Trade what?");
+            return;
+        }
+
+        ArrayList<Character> roomCharacters = player.getCurrentRoom().getCharacters();
+        canTrade trader = null;
+        for (Character character : roomCharacters) {
+            if  ((character instanceof NPC) && (character instanceof canTrade)) {
+                trader = (canTrade) character;
+                break;
+            }
+        }
+
+        if (trader == null) {
+            System.out.println("There is no one to trade with in this room.");
+            return;
+        }
+
+        String itemName = command.getSecondWord();
+        Item tradeItem = null;
+        for (Item item : player.getInventory()) {
+            if (item.getName().equalsIgnoreCase(itemName)) {
+                tradeItem = item;
+                break;
+            }
+        }
+
+        if (tradeItem == null) {
+            System.out.println("You do not have an item called " + itemName);
+            return;
+        }
+
+        if (trader.getItemWantedName().equalsIgnoreCase(itemName)) {
+            player.removeInventoryItem(tradeItem);
+            player.addInventoryItem(trader.getItemOffered());
+            System.out.println("You traded " + tradeItem.getName() + " for " + trader.getItemOffered().getName());
+            return;
+        }
+        System.out.println("The item you offered is not wanted.");
     }
 
     private void buy(Command command) {
@@ -304,14 +368,14 @@ public class Main {
         }
     }
 
-    private void attack(Command command, Character character) {
+    private void attack(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Attack what?");
             return;
         }
 
         String opponentName = command.getSecondWord().toLowerCase();
-        ArrayList<Character> roomCharacters = character.getCurrentRoom().getCharacters();
+        ArrayList<Character> roomCharacters = player.getCurrentRoom().getCharacters();
 
         Character opponent = null;
         for (Character roomCharacter : roomCharacters) {
@@ -324,8 +388,24 @@ public class Main {
             return;
         }
 
-        opponent.takeHit(character.getDamage());
+        int playerDamage = player.getDamage();
+        for (Item item: player.getInventory()) {
+            if (item instanceof Weapon) {
+                playerDamage += ((Weapon) item).getDamage();
+            }
+        }
 
+
+        if (opponent instanceof NPC npc) {
+            if (!npc.isInvincible()) {
+                npc.takeHit(playerDamage);
+                System.out.println("You attacked " + npc.getName() + " for " + playerDamage + ".");
+            }
+            npc.onHit(player);
+        } else {
+            opponent.takeHit(playerDamage);
+            System.out.println("You attacked " + opponent.getName() + " for " + playerDamage + ".");
+        }
 
         if (opponent.getHealth() <= 0) {
             opponent.dropInventory();
@@ -335,17 +415,18 @@ public class Main {
                 opponent.setCurrentRoom(heaven);
             }
             System.out.println(opponent.getName() + " has died.");
-            character.getCurrentRoom().removeCharacter(opponent);
+            player.getCurrentRoom().removeCharacter(opponent);
             return;
         }
 
-        System.out.println("Opponent Health: " + opponent.getHealth());
+        System.out.println(opponent.getName() + " Health: " + opponent.getHealth());
 
-        if (opponent instanceof NPC) {
-            ((NPC) opponent).onHit(character);
-            System.out.println(opponent.getName() + " attacked you for " + opponent.getDamage());
+
+
+        if (player.getHealth() <= 0) {
+            System.out.println("You have died.");
+            finished = true;
         }
-        System.out.println("Your health: " + character.getHealth());
     }
 
     private void talk(Command command) {

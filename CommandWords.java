@@ -37,6 +37,9 @@ public class CommandWords {
         validCommands.put("shop", "Shows the shop items");
         validCommands.put("buy", "Buy an item");
 
+        validCommands.put("trade", "Trade an item");
+        validCommands.put("Offer", "Offer an item for trade");
+
         validCommands.put("save", "Saves the game");
     }
 

@@ -58,6 +58,10 @@ public class OldMan extends NPC{
     @Override
     public void onHit(Character character) {
         setState(Emotion.ANGRY);
-        System.out.println(getName() +  ": " + getDialogue());
+        if (character instanceof Player) {
+            ((Player) character).takeHit(damage, this);
+        } else {
+            character.takeHit(damage);
+        }
     }
 }

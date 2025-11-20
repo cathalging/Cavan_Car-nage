@@ -8,7 +8,6 @@ public class Character implements Serializable {
     protected String name;
     protected int health;
     protected int damage;
-    private int money;
 
     protected Room currentRoom;
     protected ArrayList<Item> inventory = new ArrayList<>();
@@ -30,7 +29,6 @@ public class Character implements Serializable {
         this.currentRoom = startingRoom;
         this.health = health;
         this.damage = damage;
-        money = 5;
     }
 
     public Character() {}
@@ -88,13 +86,6 @@ public class Character implements Serializable {
         this.damage = damage;
     }
 
-    public int getMoney() {
-        return money;
-    }
-
-    public void setMoney(int money) {
-        this.money = money;
-    }
 
     public String getName() {
         return name;
@@ -121,10 +112,11 @@ public class Character implements Serializable {
         for (Item item : inventory) {
             removeInventoryItem(item);
             currentRoom.addItem(item);
+            break;
         }
     }
 
     public void takeHit(int damage) {
-        health -= damage;
+        setHealth(getHealth() - damage);
     }
 }

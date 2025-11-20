@@ -77,7 +77,11 @@ public class ShopKeeper extends NPC {
 
     @Override
     public void onHit(Character character) {
-        character.takeHit(damage);
         setState(Emotion.ANGRY);
+        if (character instanceof Player) {
+            ((Player) character).takeHit(damage, this);
+        } else {
+            character.takeHit(damage);
+        }
     }
 }
