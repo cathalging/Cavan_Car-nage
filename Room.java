@@ -64,7 +64,7 @@ public class Room implements Serializable {
     }
 
     public String getLongDescription() {
-        StringBuilder msg = new StringBuilder("You are " + description);
+        StringBuilder msg = new StringBuilder("You are " + description + "\n");
         if (!items.isEmpty()) {
             for (Item item : items) {
                 msg.append(item.getDescription() + "\n");
@@ -72,8 +72,10 @@ public class Room implements Serializable {
         }
         if (!characters.isEmpty()) {
             for (Character character : characters) {
-                if (character instanceof NPC)
-                    msg.append("\n" + ((NPC) character).getDescription());
+                if (character instanceof NPC npc)
+                    if (npc.getDescription() != null) {
+                        msg.append("\n" + npc.getDescription());
+                    }
             }
         }
         msg.append("\nExits:\n" + getExitString());

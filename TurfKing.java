@@ -6,7 +6,7 @@ public class TurfKing extends NPC {
 
     public void increaseDamage(int amount) {
         this.damage += amount;
-        System.out.println("I get angrier when you hit my minions.");
+        outputController.addText("I get angrier when you hit my minions.");
     }
 
     @Override

@@ -19,16 +19,17 @@ import java.util.ArrayList;
 public class Main {
     private Parser parser;
     private Player player;
-    private NPC oldMan, shopKeeper, turfKing, turfMinion1, turfMinion2, squirrel;
+    private NPC oldMan, shopKeeper, turfKing, turfMinion1, turfMinion2, squirrel, tightFist, bigBollocks, farmer;
 
-    private Room pubFront, pubBack, mainstreet, postOffice, church, townSquare, townHall, shop, park, river, cave, estate, bog, forest, heaven;
-    private Item engineOil;
+    private Room pubFront, pubBack, mainstreet, postOffice, church, townSquare, farm, shop, park, river, cave, estate, bog, forest, heaven;
+    private Item match;
     private Consumable pint;
     private Weapon stick;
     private Part keys, wheels, headlights, sparkPlug;
 
     private ShopKeeper shopController = new ShopKeeper();
     File file = new File("player.ser");
+    private OutputController outputController;
 
     boolean finished = false;
 
@@ -36,7 +37,19 @@ public class Main {
         createRooms();
         createCharacters();
         createObjects();
+        createTrades();
         parser = new Parser();
+        outputController = new OutputController();
+    }
+
+    private void createTrades() {
+        ((canTrade) tightFist).setItemWantedName("Drink Voucher");
+        ((canTrade) squirrel).setItemWantedName("Nuts");
+        ((canTrade) farmer).setItemWantedName("Soggy Match");
+
+        ((canTrade) squirrel).setItemOffered(new Item("Drink Voucher", "A drink voucher for the local pub", squirrel));
+        ((canTrade) tightFist).setItemOffered(sparkPlug);
+        ((canTrade) farmer).setItemOffered(headlights);
     }
 
     public void createObjects() {
@@ -51,10 +64,13 @@ public class Main {
                 new Item("Nuts", "Roasted Peanuts", 2));
 
         // Parts
-        keys = new Part("Keys", "The keys to your car", shop);
+        keys = new Part("Keys", "The keys to your car", bigBollocks);
         wheels = new Part("Wheels", "The wheels on your car go around and around", turfKing);
-        headlights = new Part("Headlights", "The headlights for your car", shop);
-        sparkPlug = new Part("Spark Plug", "A spark plug for your car", shop);
+        headlights = new Part("Headlights", "The headlights for your car", farmer);
+        sparkPlug = new Part("Spark Plug", "A spark plug for your car", tightFist);
+
+        // Misc
+        match = new Item("Soggy Match", "Could still be used if you're determined enough", cave);
     }
 
     private void createRooms() {
@@ -65,7 +81,7 @@ public class Main {
         pubFront = new Room("Pub Front", "at the lively front of the pub");
         pubBack = new Room("Pub Back", "in the dim back room of the pub");
         townSquare = new Room("Town Square", "in the town square with its central fountain");
-        townHall = new Room("Town Hall", "inside the town hall with tall pillars");
+        farm = new Room("Town Hall", "inside the town hall with tall pillars");
         shop = new Room("Shop", "in the general shop full of supplies");
         park = new Room("Park", "in the peaceful green park");
         estate = new Room("Estate", "on the grounds of an old estate");
@@ -91,8 +107,8 @@ public class Main {
         pubFront.setExit(Character.Direction.EAST, pubBack);
         pubBack.setExit(Character.Direction.WEST, pubFront);
 
-        townSquare.setExit(Character.Direction.WEST, townHall);
-        townHall.setExit(Character.Direction.EAST, townSquare);
+        townSquare.setExit(Character.Direction.WEST, farm);
+        farm.setExit(Character.Direction.EAST, townSquare);
 
         townSquare.setExit(Character.Direction.EAST, shop);
         shop.setExit(Character.Direction.WEST, townSquare);
@@ -147,8 +163,14 @@ public class Main {
         
         squirrel = new Squirrel("Squirrel", forest);
         forest.addCharacter(squirrel);
-        ((Squirrel) squirrel).setItemWantedName("Nuts");
-        ((Squirrel) squirrel).setItemOffered(new Item("Drink Voucher", "A drink voucher for the local pub", squirrel));
+
+        tightFist = new TightFist("Tommy Tight Fist", pubFront, 150, 20, "A man sits at the bar with his hand tightly wrapped around your cars spark plug.");
+        pubFront.addCharacter(tightFist);
+
+        bigBollocks = new BigBollocks("Billy Big Bollocks", pubBack, 300, 15, "A man flexes his muscles at you as you walk in. He is wearing your car key on the chain around his neck.");
+        pubBack.addCharacter(bigBollocks);
+
+        farmer = new Farmer("Farmer", farm, 170, 15, "A farmer is replacing a lantern with your cars headlights.");
     }
 
     public void play() {
@@ -158,13 +180,13 @@ public class Main {
             Command command = parser.getCommand();
             finished = processCommand(command);
         }
-        System.out.println("Thank you for playing. Goodbye.");
+        outputController.addText("Thank you for playing. Goodbye.");
     }
 
     private void savePlayer() {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("player.ser"))) {
             out.writeObject(player);
-            System.out.println("Saved");
+            outputController.addText("Saved");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -172,17 +194,17 @@ public class Main {
 
     private void printWelcome() {
         System.out.println();
-        System.out.println("Your car splutters to a stop in the middle of Cavan Town. You look at the dash and see a light to change engine oil. Thankfully you see a shop to the east.");
-        System.out.println("Type 'help' if you need help.");
+        outputController.addText("Your car splutters to a stop in the middle of Cavan Town. You look at the dash and see a light to change engine oil. Thankfully you see a shop to the east.");
+        outputController.addText("Type 'help' if you need help.");
         System.out.println();
-        System.out.println(player.getCurrentRoom().getLongDescription());
+        outputController.addText(player.getCurrentRoom().getLongDescription());
     }
 
     private boolean processCommand(Command command) {
         String commandWord = command.getCommandWord();
 
         if (commandWord == null) {
-            System.out.println("I don't understand your command... ");
+            outputController.addText("I don't understand your command... ");
             return false;
         }
 
@@ -231,13 +253,13 @@ public class Main {
                 break;
             case "quit":
                 if (command.hasSecondWord()) {
-                    System.out.println("Quit what?");
+                    outputController.addText("Quit what?");
                     return false;
                 } else {
                     return true; // signal to quit
                 }
             default:
-                System.out.println("I don't know what you mean...");
+                outputController.addText("I don't know what you mean...");
                 break;
         }
         return false;
@@ -245,21 +267,21 @@ public class Main {
 
     private void trade(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Trade what?");
+            outputController.addText("Trade what?");
             return;
         }
 
         ArrayList<Character> roomCharacters = player.getCurrentRoom().getCharacters();
         canTrade trader = null;
         for (Character character : roomCharacters) {
-            if  ((character instanceof NPC) && (character instanceof canTrade)) {
+            if ((character instanceof NPC) && (character instanceof canTrade)) {
                 trader = (canTrade) character;
                 break;
             }
         }
 
         if (trader == null) {
-            System.out.println("There is no one to trade with in this room.");
+            outputController.addText("There is no one to trade with in this room.");
             return;
         }
 
@@ -273,27 +295,27 @@ public class Main {
         }
 
         if (tradeItem == null) {
-            System.out.println("You do not have an item called " + itemName);
+            outputController.addText("You do not have an item called " + itemName);
             return;
         }
 
         if (trader.getItemWantedName().equalsIgnoreCase(itemName)) {
             player.removeInventoryItem(tradeItem);
             player.addInventoryItem(trader.getItemOffered());
-            System.out.println("You traded " + tradeItem.getName() + " for " + trader.getItemOffered().getName());
+            outputController.addText("You traded " + tradeItem.getName() + " for " + trader.getItemOffered().getName());
             return;
         }
-        System.out.println("The item you offered is not wanted.");
+        outputController.addText("The item you offered is not wanted.");
     }
 
     private void buy(Command command) {
         if (!player.getCurrentRoom().equals(shop)) {
-            System.out.println("You are not in the shop.");
+            outputController.addText("You are not in the shop.");
             return;
         }
 
         if (!command.hasSecondWord()) {
-            System.out.println("Buy what?");
+            outputController.addText("Buy what?");
             return;
         }
 
@@ -305,42 +327,42 @@ public class Main {
                 if (player.getMoney() >= item.getValue()) {
                     player.setMoney(player.getMoney() - item.getValue());
                     player.addInventoryItem(item);
-                    System.out.println("You bought " + item.getName() + " for " + item.getValue());
+                    outputController.addText("You bought " + item.getName() + " for " + item.getValue());
                 } else {
-                    System.out.println("You don't have enough money.");
+                    outputController.addText("You don't have enough money.");
                 }
-            } else {
-                System.out.println("Item does not exist.");
+                return;
             }
         }
+        outputController.addText("Item does not exist.");
     }
 
     private void shop() {
         if (player.getCurrentRoom().equals(shop)) {
-            System.out.println("Item:\t\tPrice:");
-            for (Item item: ((ShopKeeper) shopKeeper).getShopItems()) {
-                System.out.println(item.getName() + "\t" + item.getValue());
+            outputController.addText("Item:\t\tPrice:");
+            for (Item item : ((ShopKeeper) shopKeeper).getShopItems()) {
+                outputController.addText(item.getName() + "\t" + item.getValue());
             }
         } else {
-            System.out.println("You are not in the shop.");
+            outputController.addText("You are not in the shop.");
         }
     }
 
     private void drive(Command command) {
         if (!player.getCurrentRoom().equals(townSquare)) {
-            System.out.println("Your car is in the town square.");
+            outputController.addText("Your car is in the town square.");
             return;
         }
         if (!Car.fixed()) {
-            System.out.println("Your car is still missing parts.");
+            outputController.addText("Your car is still missing parts.");
             return;
         }
-        System.out.println("You start your car, and escape from Cavan. You win.");
+        outputController.addText("You start your car, and escape from Cavan. You win.");
     }
 
     private void use(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Use what?");
+            outputController.addText("Use what?");
             return;
         }
 
@@ -354,23 +376,33 @@ public class Main {
             }
         }
 
-        if (item == null) {
-            System.out.println("Item not found");
-        } else if (item instanceof Consumable) {
-            consumeItem(command);
-        } else if (item instanceof Part) {
-            if (player.getCurrentRoom().equals(townSquare)) {
-                Car.addPart(item);
-                System.out.println("You put the " + item.getName() + " in your car.");
-            } else {
-                System.out.println("Your car is in the town square");
+        switch (item) {
+            case null -> {
+                outputController.addText("Item not found");
+                break;
+            }
+            case Consumable consumable -> {
+                consumeItem(command);
+                break;
+            }
+            case Part part -> {
+                if (player.getCurrentRoom().equals(townSquare)) {
+                    Car.addPart(item);
+                    outputController.addText("You put the " + item.getName() + " in your car.");
+                } else {
+                    outputController.addText("Your car is in the town square");
+                }
+                break;
+            }
+            default -> {
+                outputController.addText("Invalid item");
             }
         }
     }
 
     private void attack(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Attack what?");
+            outputController.addText("Attack what?");
             return;
         }
 
@@ -384,12 +416,12 @@ public class Main {
             }
         }
         if (opponent == null) {
-            System.out.println("Character " + opponentName + " does not exist");
+            outputController.addText("Character " + opponentName + " does not exist");
             return;
         }
 
         int playerDamage = player.getDamage();
-        for (Item item: player.getInventory()) {
+        for (Item item : player.getInventory()) {
             if (item instanceof Weapon) {
                 playerDamage += ((Weapon) item).getDamage();
             }
@@ -399,39 +431,38 @@ public class Main {
         if (opponent instanceof NPC npc) {
             if (!npc.isInvincible()) {
                 npc.takeHit(playerDamage);
-                System.out.println("You attacked " + npc.getName() + " for " + playerDamage + ".");
+                outputController.addText("You attacked " + npc.getName() + " for " + playerDamage + ".");
             }
             npc.onHit(player);
         } else {
             opponent.takeHit(playerDamage);
-            System.out.println("You attacked " + opponent.getName() + " for " + playerDamage + ".");
+            outputController.addText("You attacked " + opponent.getName() + " for " + playerDamage + ".");
         }
 
         if (opponent.getHealth() <= 0) {
             opponent.dropInventory();
 
             if (opponent instanceof NPC) {
-                System.out.println(opponent.getName() + ": " + ((NPC) opponent).getDeathMessage());
+                outputController.addText(opponent.getName() + ": " + ((NPC) opponent).getDeathMessage());
                 opponent.setCurrentRoom(heaven);
             }
-            System.out.println(opponent.getName() + " has died.");
+            outputController.addText(opponent.getName() + " has died.");
             player.getCurrentRoom().removeCharacter(opponent);
             return;
         }
 
-        System.out.println(opponent.getName() + " Health: " + opponent.getHealth());
-
+        outputController.addText(opponent.getName() + " Health: " + opponent.getHealth());
 
 
         if (player.getHealth() <= 0) {
-            System.out.println("You have died.");
+            outputController.addText("You have died.");
             finished = true;
         }
     }
 
     private void talk(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Talk to who?");
+            outputController.addText("Talk to who?");
             return;
         }
 
@@ -445,18 +476,18 @@ public class Main {
             }
         }
         if (npc == null) {
-            System.out.println(npcName + " does not exist");
+            outputController.addText(npcName + " does not exist");
             return;
         }
 
         if (npc instanceof NPC) {
-            System.out.println(((NPC) npc).getDialogue());
+            outputController.addText(((NPC) npc).getDialogue());
         }
     }
 
     private void consumeItem(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Consume what?");
+            outputController.addText("Consume what?");
             return;
         }
 
@@ -467,28 +498,28 @@ public class Main {
             if (item.getName().equalsIgnoreCase(itemName) && item instanceof Consumable consumable) {
                 if (player.addEffect(consumable.getEffect())) {
                     player.removeInventoryItem(item);
-                    System.out.println("You now have the following effect:");
-                    System.out.println(Character.effectDescription.get(consumable.getEffect()));
+                    outputController.addText("You now have the following effect:");
+                    outputController.addText(Character.effectDescription.get(consumable.getEffect()));
                     return;
                 }
-                System.out.println("You already have this items effect.");
+                outputController.addText("You already have this items effect.");
                 return;
             }
         }
-        System.out.println("Item not found.\n");
+        outputController.addText("Item not found.\n");
     }
 
     private void showInventory() {
         ArrayList<Item> items = player.getInventory();
-        System.out.println("Inventory:");
+        outputController.addText("Inventory:");
         for (Item item : items.toArray(new Item[0])) {
-            System.out.println(item.getName() + ":\n" + item.getDescription());
+            outputController.addText(item.getName() + ":\n" + item.getDescription());
         }
     }
 
     private void placeItem(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Place what?");
+            outputController.addText("Place what?");
             return;
         }
         String itemName = command.getSecondWord();
@@ -500,16 +531,16 @@ public class Main {
             if (item.getName().equalsIgnoreCase(itemName)) {
                 player.removeInventoryItem(item);
                 currentRoom.addItem(item);
-                System.out.println("The " + itemName + " was placed " + currentRoom.getDescription());
+                outputController.addText("The " + itemName + " was placed " + currentRoom.getDescription());
                 return;
             }
         }
-        System.out.println("Item not found.");
+        outputController.addText("Item not found.");
     }
 
     private void takeItem(Command command) {
         if (!command.hasSecondWord()) {
-            System.out.println("Take what?");
+            outputController.addText("Take what?");
             return;
         }
         String itemName = command.getSecondWord();
@@ -520,15 +551,15 @@ public class Main {
             if (item.getName().equalsIgnoreCase(itemName)) {
                 player.addInventoryItem(item);
                 player.getCurrentRoom().removeItem(item);
-                System.out.println("You took the " + item.getName());
+                outputController.addText("You took the " + item.getName());
                 return;
             }
         }
-        System.out.println("Item not found.");
+        outputController.addText("Item not found.");
     }
 
     private void printHelp() {
-        System.out.println("You are lost. You are alone. You wander around the university.");
+        outputController.addText("You are lost. You are alone. You wander around the university.");
         System.out.print("Your command words are: ");
         parser.showCommands();
         System.out.println();
@@ -538,7 +569,7 @@ public class Main {
         String directionStr;
 
         if (!command.hasSecondWord()) {
-            System.out.println("Go where?");
+            outputController.addText("Go where?");
             return;
         }
 
@@ -555,18 +586,18 @@ public class Main {
         };
 
         if (direction == null) {
-            System.out.println("There is no door!\n");
+            outputController.addText("There is no door!\n");
         } else {
             character.move(direction);
 
             // Room Info
-            System.out.println(character.getCurrentRoom().getLongDescription());
+            outputController.addText(character.getCurrentRoom().getLongDescription());
 
             // Player Info
             if (!character.getEffects().isEmpty()) {
-                System.out.println("Your Current Effects:");
+                outputController.addText("Your Current Effects:");
                 for (Effect effect : character.getEffects()) {
-                    System.out.println(Character.effectDescription.get(effect));
+                    outputController.addText(Character.effectDescription.get(effect));
                     System.out.println();
                 }
             }

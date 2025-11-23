@@ -20,11 +20,11 @@ public class Player extends Character {
     public void takeHit(int damage, Character opponent) {
         if (this.getEffects().contains(Effect.LANGERS)) {
             setHealth(getHealth() - (damage / 2));
-            System.out.println(opponent.getName() + " attacked you for " + (damage / 2));
+            outputController.addText(opponent.getName() + " attacked you for " + (damage / 2));
         } else {
             setHealth(getHealth() - damage);
-            System.out.println(opponent.getName() + " attacked you for " + damage);
+            outputController.addText(opponent.getName() + " attacked you for " + damage);
         }
-        System.out.println("Your health: " + getHealth());
+        outputController.addText("Your health: " + getHealth());
     }
 }

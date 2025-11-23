@@ -12,6 +12,8 @@ public class Character implements Serializable {
     protected Room currentRoom;
     protected ArrayList<Item> inventory = new ArrayList<>();
 
+    protected OutputController outputController = new OutputController();
+
     protected HashMap<Effect, Integer> effects = new HashMap<>();
     protected static HashMap<Effect, String> effectDescription = new HashMap<>();
     static {
@@ -104,7 +106,7 @@ public class Character implements Serializable {
         if (nextRoom != null) {
             currentRoom = nextRoom;
         } else {
-            System.out.println("You can't go that way!");
+            outputController.addText("You can't go that way!");
         }
     }
 

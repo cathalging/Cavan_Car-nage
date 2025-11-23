@@ -6,6 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public abstract class NPC extends Character {
     protected String filePath = "dialogue/" + name + ".txt";
     protected boolean invincible = false;
+    protected String description;
 
     protected enum Emotion {
         NEUTRAL,
