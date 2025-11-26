@@ -1,3 +1,5 @@
+package game;
+
 public class TurfMinion extends NPC{
     String description;
     TurfKing king;

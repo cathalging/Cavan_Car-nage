@@ -1,21 +1,22 @@
-public class Squirrel extends NPC implements canTrade{
-    private String itemWantedName;
-    private Item itemOffered;
+package game;
 
-    public Squirrel(String name, Room startingRoom) {
-        this.name = name;
-        this.currentRoom = startingRoom;
-        this.invincible = true;
+public class TightFist extends NPC implements canTrade {
+    protected Item itemOffered;
+    protected String itemWantedName;
+
+    public TightFist(String name, Room startingRoom, int health, int damage, String description) {
+        super(name, startingRoom, health, damage);
+        this.description = description;
     }
 
     @Override
     public String getDescription() {
-        return "A squirrel stands at the base of the tree in front of you. It clutches a drink voucher";
+        return "";
     }
 
     @Override
     public void onDeath() {
-        outputController.addText("The squirrel ran away with the ");
+
     }
 
     @Override
@@ -25,7 +26,7 @@ public class Squirrel extends NPC implements canTrade{
 
     @Override
     public String getDialogue() {
-        return "Woof Woof";
+        return "";
     }
 
     @Override
@@ -35,12 +36,12 @@ public class Squirrel extends NPC implements canTrade{
 
     @Override
     public void onHit(Character character) {
-        outputController.addText("Did you just try to hit an animal?");
+
     }
 
     @Override
-    public void setItemWantedName(String item) {
-        this.itemWantedName = item;
+    public void setItemWantedName(String itemWantedName) {
+        this.itemWantedName = itemWantedName;
     }
 
     @Override

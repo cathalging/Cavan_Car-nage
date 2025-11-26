@@ -1,13 +1,14 @@
+package game;
+
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Room implements Serializable {
     private String description;
     private String name;
-    private Map<Character.Direction, Room> exits; // Map direction to neighboring Room
+    private Map<Character.Direction, Room> exits; // Map direction to neighboring game.Room
     private ArrayList<Item> items = new ArrayList<>();
     private ArrayList<Character> characters = new ArrayList<>();
 

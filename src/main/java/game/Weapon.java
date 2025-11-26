@@ -1,3 +1,5 @@
+package game;
+
 public class Weapon extends Item {
     private int damage;
 

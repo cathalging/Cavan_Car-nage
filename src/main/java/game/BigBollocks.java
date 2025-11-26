@@ -1,3 +1,5 @@
+package game;
+
 public class BigBollocks extends NPC {
     public BigBollocks(String name, Room startingRoom, int health, int damage, String description) {
         super(name, startingRoom, health, damage);

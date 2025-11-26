@@ -1,3 +1,5 @@
+package game;
+
 public interface canTrade {
     public void setItemWantedName(String itemWantedName);
     public void setItemOffered(Item item);

@@ -1,3 +1,5 @@
+package game;
+
 public class Car {
     static Item[] parts = new Item[4];
 

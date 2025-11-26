@@ -1,3 +1,5 @@
+package game;
+
 import java.util.Scanner;
 
 public class Parser {
@@ -9,14 +11,14 @@ public class Parser {
         reader = new Scanner(System.in);
     }
 
-    public Command getCommand() {
-        System.out.print("> ");
-        String inputLine = reader.nextLine();
+    public Command getCommand(String command) {
+        //System.out.print("> ");
+        //String inputLine = reader.nextLine();
 
         String word1 = null;
         String word2 = null;
 
-        Scanner tokenizer = new Scanner(inputLine);
+        Scanner tokenizer = new Scanner(command);
         if (tokenizer.hasNext()) {
             word1 = tokenizer.next();
             if (tokenizer.hasNext()) {

@@ -1,23 +1,10 @@
-/* This game is a classic text-based adventure set in a university environment.
-   The player starts outside the main entrance and can navigate through different rooms like a 
-   lecture theatre, campus pub, computing lab, and admin office using simple text commands (e.g., "go east", "go west").
-    The game provides descriptions of each location and lists possible exits.
-
-Key features include:
-Room navigation: Moving among interconnected rooms with named exits.
-Simple command parser: Recognizes a limited set of commands like "go", "help", and "quit".
-Player character: Tracks current location and handles moving between rooms.
-Text descriptions: Provides immersive text output describing the player's surroundings and available options.
-Help system: Lists valid commands to guide the player.
-Overall, it recreates the classic Zork interactive fiction experience with a university-themed setting, 
-emphasizing exploration and simple command-driven gameplay
-*/
+package game;
 
 import java.io.*;
 import java.util.ArrayList;
 
 public class Main {
-    private Parser parser;
+    static private Parser parser;
     private Player player;
     private NPC oldMan, shopKeeper, turfKing, turfMinion1, turfMinion2, squirrel, tightFist, bigBollocks, farmer;
 
@@ -29,7 +16,10 @@ public class Main {
 
     private ShopKeeper shopController = new ShopKeeper();
     File file = new File("player.ser");
-    private OutputController outputController;
+    private OutputController outputController = new OutputController();
+
+    private GUI gui;
+    private static Main game;
 
     boolean finished = false;
 
@@ -39,7 +29,15 @@ public class Main {
         createObjects();
         createTrades();
         parser = new Parser();
-        outputController = new OutputController();
+        gui = new GUI();
+    }
+
+    public static Main getGame() {
+        return game;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
     private void createTrades() {
@@ -76,7 +74,7 @@ public class Main {
     private void createRooms() {
         // create rooms
         postOffice = new Room("Post Office", "inside the town's small post office");
-        mainstreet = new Room("Main Street", "walking along the town's main street");
+        mainstreet = new Room("game.Main Street", "walking along the town's main street");
         church = new Room("Church", "standing inside a quiet stone church");
         pubFront = new Room("Pub Front", "at the lively front of the pub");
         pubBack = new Room("Pub Back", "in the dim back room of the pub");
@@ -136,7 +134,7 @@ public class Main {
     }
 
     public void createCharacters() {
-        // Player
+        // game.Player
         if (file.exists()) {
             try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("player.ser"))) {
                 player = (Player) in.readObject();
@@ -161,7 +159,7 @@ public class Main {
         bog.addCharacter(turfMinion1);
         bog.addCharacter(turfMinion2);
         
-        squirrel = new Squirrel("Squirrel", forest);
+        squirrel = new Squirrel("game.Squirrel", forest);
         forest.addCharacter(squirrel);
 
         tightFist = new TightFist("Tommy Tight Fist", pubFront, 150, 20, "A man sits at the bar with his hand tightly wrapped around your cars spark plug.");
@@ -170,17 +168,13 @@ public class Main {
         bigBollocks = new BigBollocks("Billy Big Bollocks", pubBack, 300, 15, "A man flexes his muscles at you as you walk in. He is wearing your car key on the chain around his neck.");
         pubBack.addCharacter(bigBollocks);
 
-        farmer = new Farmer("Farmer", farm, 170, 15, "A farmer is replacing a lantern with your cars headlights.");
+        farmer = new Farmer("game.Farmer", farm, 170, 15, "A farmer is replacing a lantern with your cars headlights.");
     }
+
 
     public void play() {
         printWelcome();
-
-        while (!finished) {
-            Command command = parser.getCommand();
-            finished = processCommand(command);
-        }
-        outputController.addText("Thank you for playing. Goodbye.");
+        gui.run();
     }
 
     private void savePlayer() {
@@ -193,14 +187,11 @@ public class Main {
     }
 
     private void printWelcome() {
-        System.out.println();
         outputController.addText("Your car splutters to a stop in the middle of Cavan Town. You look at the dash and see a light to change engine oil. Thankfully you see a shop to the east.");
-        outputController.addText("Type 'help' if you need help.");
-        System.out.println();
         outputController.addText(player.getCurrentRoom().getLongDescription());
     }
 
-    private boolean processCommand(Command command) {
+    public boolean processCommand(Command command) {
         String commandWord = command.getCommandWord();
 
         if (commandWord == null) {
@@ -334,12 +325,12 @@ public class Main {
                 return;
             }
         }
-        outputController.addText("Item does not exist.");
+        outputController.addText("game.Item does not exist.");
     }
 
     private void shop() {
         if (player.getCurrentRoom().equals(shop)) {
-            outputController.addText("Item:\t\tPrice:");
+            outputController.addText("game.Item:\t\tPrice:");
             for (Item item : ((ShopKeeper) shopKeeper).getShopItems()) {
                 outputController.addText(item.getName() + "\t" + item.getValue());
             }
@@ -378,7 +369,7 @@ public class Main {
 
         switch (item) {
             case null -> {
-                outputController.addText("Item not found");
+                outputController.addText("game.Item not found");
                 break;
             }
             case Consumable consumable -> {
@@ -416,7 +407,7 @@ public class Main {
             }
         }
         if (opponent == null) {
-            outputController.addText("Character " + opponentName + " does not exist");
+            outputController.addText("game.Character " + opponentName + " does not exist");
             return;
         }
 
@@ -506,7 +497,7 @@ public class Main {
                 return;
             }
         }
-        outputController.addText("Item not found.\n");
+        outputController.addText("game.Item not found.\n");
     }
 
     private void showInventory() {
@@ -535,7 +526,7 @@ public class Main {
                 return;
             }
         }
-        outputController.addText("Item not found.");
+        outputController.addText("game.Item not found.");
     }
 
     private void takeItem(Command command) {
@@ -555,7 +546,7 @@ public class Main {
                 return;
             }
         }
-        outputController.addText("Item not found.");
+        outputController.addText("game.Item not found.");
     }
 
     private void printHelp() {
@@ -589,23 +580,23 @@ public class Main {
             outputController.addText("There is no door!\n");
         } else {
             character.move(direction);
+            outputController.clearConsole();
 
-            // Room Info
+            // game.Room Info
             outputController.addText(character.getCurrentRoom().getLongDescription());
 
-            // Player Info
+            // game.Player Info
             if (!character.getEffects().isEmpty()) {
                 outputController.addText("Your Current Effects:");
                 for (Effect effect : character.getEffects()) {
                     outputController.addText(Character.effectDescription.get(effect));
-                    System.out.println();
                 }
             }
         }
     }
 
     public static void main(String[] args) {
-        Main game = new Main();
+        game = new Main();
         game.play();
     }
 }

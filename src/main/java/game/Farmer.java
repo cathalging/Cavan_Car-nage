@@ -1,3 +1,5 @@
+package game;
+
 public class Farmer extends NPC implements canTrade{
     String itemWantedName;
     Item itemOffered;

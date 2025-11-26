@@ -1,10 +1,7 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.concurrent.ThreadLocalRandom;
+package game;
 
 public abstract class NPC extends Character {
-    protected String filePath = "dialogue/" + name + ".txt";
+    protected String filePath = "game/dialogue/" + name + ".txt";
     protected boolean invincible = false;
     protected String description;
 

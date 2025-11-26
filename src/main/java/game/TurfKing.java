@@ -1,3 +1,5 @@
+package game;
+
 public class TurfKing extends NPC {
 
     public TurfKing(String name, Room startingRoom, int health, int damage) {
