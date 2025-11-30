@@ -1,5 +1,7 @@
 package game;
 
+import game.characters.Character;
+import game.characters.*;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;

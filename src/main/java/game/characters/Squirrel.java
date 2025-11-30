@@ -1,6 +1,9 @@
-package game;
+package game.characters;
 
-public class Squirrel extends NPC implements canTrade{
+import game.Item;
+import game.Room;
+
+public class Squirrel extends NPC implements CanTrade {
     private String itemWantedName;
     private Item itemOffered;
 
@@ -20,15 +23,7 @@ public class Squirrel extends NPC implements canTrade{
         outputController.addText("The squirrel ran away with the ");
     }
 
-    @Override
-    protected int getDialogueOption() {
-        return 0;
-    }
 
-    @Override
-    public String getDialogue() {
-        return "Woof Woof";
-    }
 
     @Override
     public String getDeathMessage() {

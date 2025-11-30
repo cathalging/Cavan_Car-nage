@@ -1,6 +1,11 @@
 package game;
 
+import game.characters.*;
+import game.characters.Character;
+import game.characters.Effect;
+
 import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class Main {
@@ -30,6 +35,9 @@ public class Main {
         createTrades();
         parser = new Parser();
         gui = new GUI();
+        URL url = getClass().getResource("/game/music/background.mp3");
+        System.out.println(url);
+
     }
 
     public static Main getGame() {
@@ -40,14 +48,16 @@ public class Main {
         return player;
     }
 
-    private void createTrades() {
-        ((canTrade) tightFist).setItemWantedName("Drink Voucher");
-        ((canTrade) squirrel).setItemWantedName("Nuts");
-        ((canTrade) farmer).setItemWantedName("Soggy Match");
 
-        ((canTrade) squirrel).setItemOffered(new Item("Drink Voucher", "A drink voucher for the local pub", squirrel));
-        ((canTrade) tightFist).setItemOffered(sparkPlug);
-        ((canTrade) farmer).setItemOffered(headlights);
+
+    private void createTrades() {
+        ((CanTrade) tightFist).setItemWantedName("Drink Voucher");
+        ((CanTrade) squirrel).setItemWantedName("Nuts");
+        ((CanTrade) farmer).setItemWantedName("Soggy Match");
+
+        ((CanTrade) squirrel).setItemOffered(new Item("Drink Voucher", "A drink voucher for the local pub", squirrel));
+        ((CanTrade) tightFist).setItemOffered(sparkPlug);
+        ((CanTrade) farmer).setItemOffered(headlights);
     }
 
     public void createObjects() {
@@ -134,41 +144,33 @@ public class Main {
     }
 
     public void createCharacters() {
-        // game.Player
-        if (file.exists()) {
-            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("player.ser"))) {
-                player = (Player) in.readObject();
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        } else {
-            player = new Player("player", townSquare, 100, 20);
-        }
+
+        player = new Player("player", townSquare, 100, 20);
 
         // NPCS
-        oldMan = new OldMan("Old Man", townSquare, 100, 10);
+        oldMan = new OldMan("Old Man", townSquare, 100, 10, "old_man");
         townSquare.addCharacter(oldMan);
 
-        shopKeeper = new ShopKeeper("Shop Keeper", shop, 100000, 10000);
+        shopKeeper = new ShopKeeper("Shop Keeper", shop, 100000, 10000, "shopkeeper");
         shop.addCharacter(shopKeeper);
 
-        turfKing = new TurfKing("Turf King", bog, 200, 5);
-        turfMinion1 = new TurfMinion("Turf Minion 1", bog, 50, 10, "The first stands wielding a stick.", (TurfKing) turfKing);
-        turfMinion2 = new TurfMinion("Turf Minion 2", bog, 50, 10, "The second raises his fists as you approach.", (TurfKing) turfKing);
+        turfKing = new TurfKing("Turf King", bog, 200, 5, "turf_king");
+        turfMinion1 = new TurfMinion("Turf Minion 1", bog, 50, 10, "The first stands wielding a stick.", "turf_minion", (TurfKing) turfKing);
+        turfMinion2 = new TurfMinion("Turf Minion 2", bog, 50, 10, "The second raises his fists as you approach.", "turf_minion", (TurfKing) turfKing);
         bog.addCharacter(turfKing);
         bog.addCharacter(turfMinion1);
         bog.addCharacter(turfMinion2);
         
-        squirrel = new Squirrel("game.Squirrel", forest);
+        squirrel = new Squirrel("game.npc.Squirrel", forest);
         forest.addCharacter(squirrel);
 
-        tightFist = new TightFist("Tommy Tight Fist", pubFront, 150, 20, "A man sits at the bar with his hand tightly wrapped around your cars spark plug.");
+        tightFist = new TightFist("Tommy Tight Fist", pubFront, 150, 20, "A man sits at the bar with his hand tightly wrapped around your cars spark plug.", "tight_fist");
         pubFront.addCharacter(tightFist);
 
-        bigBollocks = new BigBollocks("Billy Big Bollocks", pubBack, 300, 15, "A man flexes his muscles at you as you walk in. He is wearing your car key on the chain around his neck.");
+        bigBollocks = new BigBollocks("Billy Big Bollocks", pubBack, 300, 15, "A man flexes his muscles at you as you walk in. He is wearing your car key on the chain around his neck.", "big_bollocks");
         pubBack.addCharacter(bigBollocks);
 
-        farmer = new Farmer("game.Farmer", farm, 170, 15, "A farmer is replacing a lantern with your cars headlights.");
+        farmer = new Farmer("game.npc.Farmer", farm, 170, 15, "A farmer is replacing a lantern with your cars headlights.", "farmer");
     }
 
 
@@ -263,10 +265,10 @@ public class Main {
         }
 
         ArrayList<Character> roomCharacters = player.getCurrentRoom().getCharacters();
-        canTrade trader = null;
+        CanTrade trader = null;
         for (Character character : roomCharacters) {
-            if ((character instanceof NPC) && (character instanceof canTrade)) {
-                trader = (canTrade) character;
+            if ((character instanceof NPC) && (character instanceof CanTrade)) {
+                trader = (CanTrade) character;
                 break;
             }
         }
@@ -407,7 +409,7 @@ public class Main {
             }
         }
         if (opponent == null) {
-            outputController.addText("game.Character " + opponentName + " does not exist");
+            outputController.addText("game.characters.Character " + opponentName + " does not exist");
             return;
         }
 
@@ -418,6 +420,10 @@ public class Main {
             }
         }
 
+        // Sound Effect
+        if (gui != null) {
+            AudioManager.playSfx("/game/music/hitSound.wav");
+        }
 
         if (opponent instanceof NPC npc) {
             if (!npc.isInvincible()) {
@@ -472,7 +478,7 @@ public class Main {
         }
 
         if (npc instanceof NPC) {
-            outputController.addText(((NPC) npc).getDialogue());
+            outputController.addText(((NPC) npc).getDialog());
         }
     }
 
@@ -550,7 +556,6 @@ public class Main {
     }
 
     private void printHelp() {
-        outputController.addText("You are lost. You are alone. You wander around the university.");
         System.out.print("Your command words are: ");
         parser.showCommands();
         System.out.println();
@@ -585,7 +590,7 @@ public class Main {
             // game.Room Info
             outputController.addText(character.getCurrentRoom().getLongDescription());
 
-            // game.Player Info
+            // game.characters.Player Info
             if (!character.getEffects().isEmpty()) {
                 outputController.addText("Your Current Effects:");
                 for (Effect effect : character.getEffects()) {

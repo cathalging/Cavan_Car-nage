@@ -73,15 +73,13 @@ public class GUI extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(
-            getClass().getResource("/game/gui.fxml")
-        );
-
-        Scene scene = new Scene(loader.load(), 600, 400);
+        SceneManager.setStage(stage);
+        SceneManager.switchTo("/game/menu.fxml");
 
         stage.setTitle("Cavan Car-nage");
-        stage.setScene(scene);
         stage.show();
+
+        AudioManager.playBackground("/game/music/background.mp3");
     }
 
     public void run() {

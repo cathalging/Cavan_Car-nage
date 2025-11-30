@@ -1,8 +1,10 @@
-package game;
+package game.characters;
+
+import game.Room;
 
 public class BigBollocks extends NPC {
-    public BigBollocks(String name, Room startingRoom, int health, int damage, String description) {
-        super(name, startingRoom, health, damage);
+    public BigBollocks(String name, Room startingRoom, int health, int damage, String description, String fileName) {
+        super(name, startingRoom, health, damage, fileName);
         this.description = description;
     }
 
@@ -16,15 +18,7 @@ public class BigBollocks extends NPC {
         dropInventory();
     }
 
-    @Override
-    protected int getDialogueOption() {
-        return 0;
-    }
 
-    @Override
-    public String getDialogue() {
-        return "";
-    }
 
     @Override
     public String getDeathMessage() {

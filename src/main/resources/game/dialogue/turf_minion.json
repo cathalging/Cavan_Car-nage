@@ -1,0 +1,17 @@
+{
+  "neutral": [
+    "The king says you’re allowed here… for now.",
+    "Keep the boots clean—he hates muck on his turf.",
+    "Just follow orders, that’s my job."
+  ],
+  "angry": [
+    "Don’t be givin’ me backchat!",
+    "You’ll have the king ragin’ if you keep that up!",
+    "Stay off the turf pile or you’re dead meat!"
+  ],
+  "happy": [
+    "Ah the king’s in good form, so we all are!",
+    "Not a bad day for shoutin’ orders at strangers.",
+    "The bog’s soft today—makes the job easier."
+  ]
+}

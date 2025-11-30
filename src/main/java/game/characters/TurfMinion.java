@@ -1,11 +1,13 @@
-package game;
+package game.characters;
 
-public class TurfMinion extends NPC{
+import game.Room;
+
+public class TurfMinion extends NPC {
     String description;
     TurfKing king;
 
-    public TurfMinion(String name, Room startingRoom, int health, int damage, String description, TurfKing king) {
-        super(name, startingRoom, health, damage);
+    public TurfMinion(String name, Room startingRoom, int health, int damage, String description, String fileName, TurfKing king) {
+        super(name, startingRoom, health, damage, fileName);
         this.description = description;
         this.king = king;
     }
@@ -20,15 +22,6 @@ public class TurfMinion extends NPC{
 
     }
 
-    @Override
-    protected int getDialogueOption() {
-        return 0;
-    }
-
-    @Override
-    public String getDialogue() {
-        return "We serve the High King of Turf";
-    }
 
     @Override
     public String getDeathMessage() {

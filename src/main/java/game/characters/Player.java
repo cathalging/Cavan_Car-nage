@@ -1,4 +1,6 @@
-package game;
+package game.characters;
+
+import game.Room;
 
 public class Player extends Character {
     private int money;
@@ -25,7 +27,7 @@ public class Player extends Character {
         this.money = money;
     }
 
-    public void takeHit(int damage, Character opponent) {
+    public void takeHit(int damage, game.characters.Character opponent) {
         if (this.getEffects().contains(Effect.LANGERS)) {
             setHealth(getHealth() - (damage / 2));
             outputController.addText(opponent.getName() + " attacked you for " + (damage / 2));

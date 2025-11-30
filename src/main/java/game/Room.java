@@ -1,5 +1,8 @@
 package game;
 
+import game.characters.Character;
+import game.characters.NPC;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,9 +11,9 @@ import java.util.Map;
 public class Room implements Serializable {
     private String description;
     private String name;
-    private Map<Character.Direction, Room> exits; // Map direction to neighboring game.Room
+    private Map<game.characters.Character.Direction, Room> exits; // Map direction to neighboring game.Room
     private ArrayList<Item> items = new ArrayList<>();
-    private ArrayList<Character> characters = new ArrayList<>();
+    private ArrayList<game.characters.Character> characters = new ArrayList<>();
 
     private int state = 0;
 
@@ -28,15 +31,15 @@ public class Room implements Serializable {
         items.remove(item);
     }
 
-    public void addCharacter(Character character) {
+    public void addCharacter(game.characters.Character character) {
         characters.add(character);
     }
 
-    public void removeCharacter(Character character) {
+    public void removeCharacter(game.characters.Character character) {
         characters.remove(character);
     }
 
-    public ArrayList<Character> getCharacters() {
+    public ArrayList<game.characters.Character> getCharacters() {
         return characters;
     }
 
@@ -52,13 +55,13 @@ public class Room implements Serializable {
         exits.put(direction, neighbor);
     }
 
-    public Room getExit(Character.Direction direction) {
+    public Room getExit(game.characters.Character.Direction direction) {
         return exits.get(direction);
     }
 
     public String getExitString() {
         StringBuilder sb = new StringBuilder();
-        for (Character.Direction direction : exits.keySet()) {
+        for (game.characters.Character.Direction direction : exits.keySet()) {
             sb.append(direction).append(" ");
         }
         return sb.toString().trim();
@@ -72,7 +75,7 @@ public class Room implements Serializable {
             }
         }
         if (!characters.isEmpty()) {
-            for (Character character : characters) {
+            for (game.characters.Character character : characters) {
                 if (character instanceof NPC npc)
                     if (npc.getDescription() != null) {
                         msg.append("\n" + npc.getDescription());

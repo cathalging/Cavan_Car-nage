@@ -1,5 +1,8 @@
 package game;
 
+import game.characters.*;
+import game.characters.Character;
+
 public class Weapon extends Item {
     private int damage;
 

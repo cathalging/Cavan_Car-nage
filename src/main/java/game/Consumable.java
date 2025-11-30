@@ -1,5 +1,7 @@
 package game;
 
+import game.characters.Effect;
+
 public class Consumable extends Item {
     private Effect effect;
 

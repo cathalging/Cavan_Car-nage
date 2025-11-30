@@ -1,11 +1,14 @@
-package game;
+package game.characters;
 
-public class TightFist extends NPC implements canTrade {
+import game.Item;
+import game.Room;
+
+public class TightFist extends NPC implements CanTrade {
     protected Item itemOffered;
     protected String itemWantedName;
 
-    public TightFist(String name, Room startingRoom, int health, int damage, String description) {
-        super(name, startingRoom, health, damage);
+    public TightFist(String name, Room startingRoom, int health, int damage, String description, String fileName) {
+        super(name, startingRoom, health, damage, fileName);
         this.description = description;
     }
 
@@ -19,15 +22,7 @@ public class TightFist extends NPC implements canTrade {
 
     }
 
-    @Override
-    protected int getDialogueOption() {
-        return 0;
-    }
 
-    @Override
-    public String getDialogue() {
-        return "";
-    }
 
     @Override
     public String getDeathMessage() {

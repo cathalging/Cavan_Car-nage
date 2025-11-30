@@ -1,4 +1,8 @@
-package game;
+package game.characters;
+
+import game.Item;
+import game.OutputController;
+import game.Room;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,7 +21,7 @@ public class Character implements Serializable {
     protected OutputController outputController = new OutputController();
 
     protected HashMap<Effect, Integer> effects = new HashMap<>();
-    protected static HashMap<Effect, String> effectDescription = new HashMap<>();
+    public static HashMap<Effect, String> effectDescription = new HashMap<>();
     static {
         effectDescription.put(Effect.LANGERS, "Langers: You are out of your mind, what a lightweight.");
         effectDescription.put(Effect.NOTIONS, "Notions: You have an air of confidence about you.");
@@ -37,7 +41,7 @@ public class Character implements Serializable {
 
     public Character() {}
 
-    enum Direction {
+    public enum Direction {
         NORTH, SOUTH, EAST, WEST;
 
         public static Direction random() {

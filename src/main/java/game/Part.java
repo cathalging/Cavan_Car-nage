@@ -1,5 +1,7 @@
 package game;
 
+import game.characters.Character;
+
 public class Part extends Item{
     public Part(String name, String Description, Room room) {
         super(name, Description, room);

@@ -1,5 +1,8 @@
 package game;
 
+import game.characters.*;
+import game.characters.Character;
+
 import java.io.Serializable;
 
 public class Item implements Serializable {

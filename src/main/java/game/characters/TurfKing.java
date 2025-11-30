@@ -1,9 +1,11 @@
-package game;
+package game.characters;
+
+import game.Room;
 
 public class TurfKing extends NPC {
 
-    public TurfKing(String name, Room startingRoom, int health, int damage) {
-        super(name, startingRoom, health, damage);
+    public TurfKing(String name, Room startingRoom, int health, int damage, String fileName) {
+        super(name, startingRoom, health, damage, fileName);
     }
 
     public void increaseDamage(int amount) {
@@ -22,15 +24,7 @@ public class TurfKing extends NPC {
         dropInventory();
     }
 
-    @Override
-    protected int getDialogueOption() {
-        return 0;
-    }
 
-    @Override
-    public String getDialogue() {
-        return "I am the High King of Turf. Thou shall feck off fairly lively.";
-    }
 
     @Override
     public String getDeathMessage() {
