@@ -1,0 +1,17 @@
+{
+  "neutral": [
+    "Ah sure, you're out early. Roads are quiet today.",
+    "Mind yourself, lad. Weather’s turnin’.",
+    "You wouldn’t think it, but I remember when this street was packed."
+  ],
+  "angry": [
+    "Watch where you’re goin', will ya?",
+    "I’ve no patience for young lads rushin’ about!",
+    "If you're lookin’ for trouble, find someone else."
+  ],
+  "happy": [
+    "Grand day, isn’t it? Makes the bones feel young again.",
+    "Fair play to ya, always a smile on ya.",
+    "Ah, that’s a fine sight—someone enjoyin’ the day."
+  ]
+}

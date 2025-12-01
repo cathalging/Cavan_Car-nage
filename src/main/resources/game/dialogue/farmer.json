@@ -1,0 +1,17 @@
+{
+  "neutral": [
+    "Aye, I’ve your headlights. Found ‘em in the ditch.",
+    "If you want them back, you’ll have to wait—I’m busy.",
+    "Roads are rough out here. You’ll lose more than headlights if you’re not careful."
+  ],
+  "angry": [
+    "Don’t be shoutin’—I said I HAVE them!",
+    "You’re lucky I picked them up at all!",
+    "Come back when you’ve manners."
+  ],
+  "happy": [
+    "Right, I’ll fit them for ya if you want.",
+    "Grand to see someone takin’ care of their motor.",
+    "Here you go—good as new! Well… good as Cavan new."
+  ]
+}

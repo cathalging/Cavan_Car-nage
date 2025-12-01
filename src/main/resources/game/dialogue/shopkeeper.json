@@ -1,0 +1,17 @@
+{
+  "neutral": [
+    "Need somethin'? Shelves are full, take your pick.",
+    "If you’re lookin' for deals, they’re marked in yellow.",
+    "Don’t mind the muscles—lifting crates all day will do that."
+  ],
+  "angry": [
+    "If you’re not buyin’, stop blockin’ the aisle!",
+    "Put that back proper! I’ve just stacked those!",
+    "Don’t make me haul you out by the scruff, lad."
+  ],
+  "happy": [
+    "Good man, always nice to see a regular.",
+    "Got a fresh batch of stock in—dead handy stuff!",
+    "Tell ya what, I’ll give you a little discount. Don’t say I’m not good to ya."
+  ]
+}
