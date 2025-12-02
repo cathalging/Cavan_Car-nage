@@ -1,6 +1,8 @@
 package game;
 
-public class OutputController {
+import java.io.Serializable;
+
+public class OutputController implements Serializable {
     private static StringBuilder textBuffer = new StringBuilder();
 
 

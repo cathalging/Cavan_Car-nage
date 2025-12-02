@@ -77,6 +77,7 @@ public class GUI extends Application {
         SceneManager.switchTo("/game/menu.fxml");
 
         stage.setTitle("Cavan Car-nage");
+        //stage.setResizable(false);
         stage.show();
 
         AudioManager.playBackground("/game/music/background.mp3");

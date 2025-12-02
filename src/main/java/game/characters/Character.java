@@ -1,5 +1,6 @@
 package game.characters;
 
+import game.Direction;
 import game.Item;
 import game.OutputController;
 import game.Room;
@@ -8,7 +9,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Character implements Serializable {
     protected String name;
@@ -40,15 +40,6 @@ public class Character implements Serializable {
     }
 
     public Character() {}
-
-    public enum Direction {
-        NORTH, SOUTH, EAST, WEST;
-
-        public static Direction random() {
-            Direction[] values = Direction.values();
-            return values[ThreadLocalRandom.current().nextInt(values.length)];
-        }
-    }
 
     public void addInventoryItem(Item item) {
         inventory.add(item);

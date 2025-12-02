@@ -1,6 +1,5 @@
 package game;
 
-import game.characters.Character;
 import game.characters.NPC;
 
 import java.io.Serializable;
@@ -9,18 +8,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Room implements Serializable {
-    private String description;
+    private String longDescription;
+    private String shortDescription;
     private String name;
-    private Map<game.characters.Character.Direction, Room> exits; // Map direction to neighboring game.Room
+
+    private Map<Direction, String> exitIds; // Map direction to neighboring game.Room
+    private HashMap<Direction, Room> exits;
+
     private ArrayList<Item> items = new ArrayList<>();
     private ArrayList<game.characters.Character> characters = new ArrayList<>();
 
-    private int state = 0;
-
-    public Room(String name, String description) {
+    public Room(String name) {
         this.name = name;
-        this.description = description;
-        exits = new HashMap<>();
+        this.exitIds = new HashMap<>();
     }
 
     public void addItem(Item item) {
@@ -48,27 +48,34 @@ public class Room implements Serializable {
     }
 
     public String getDescription() {
-        return description;
+        return longDescription;
     }
 
-    public void setExit(Character.Direction direction, Room neighbor) {
-        exits.put(direction, neighbor);
+    public void addExit(Direction direction, String neighborName) {
+        exitIds.put(direction, neighborName);
     }
-
-    public Room getExit(game.characters.Character.Direction direction) {
+    
+    public Room getExit(Direction direction) {
         return exits.get(direction);
+    }
+
+    public void resolveExits(Map<String, Room> allRooms) {
+        exits = new HashMap<>();
+        for (var entry : exitIds.entrySet()) {
+            exits.put(entry.getKey(), allRooms.get(entry.getValue()));
+        }
     }
 
     public String getExitString() {
         StringBuilder sb = new StringBuilder();
-        for (game.characters.Character.Direction direction : exits.keySet()) {
+        for (Direction direction : exitIds.keySet()) {
             sb.append(direction).append(" ");
         }
         return sb.toString().trim();
     }
 
     public String getLongDescription() {
-        StringBuilder msg = new StringBuilder("You are " + description + "\n");
+        StringBuilder msg = new StringBuilder("You are " + longDescription + "\n");
         if (!items.isEmpty()) {
             for (Item item : items) {
                 msg.append(item.getDescription() + "\n");

@@ -7,13 +7,16 @@ import game.characters.Effect;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
     static private Parser parser;
     private Player player;
+    private Map<String, Room> rooms = new HashMap<>();
+    private Map<String, NPC> npcs = new HashMap<>();
     private NPC oldMan, shopKeeper, turfKing, turfMinion1, turfMinion2, squirrel, tightFist, bigBollocks, farmer;
 
-    private Room pubFront, pubBack, mainstreet, postOffice, church, townSquare, farm, shop, park, river, cave, estate, bog, forest, heaven;
     private Item match;
     private Consumable pint;
     private Weapon stick;
@@ -29,15 +32,19 @@ public class Main {
     boolean finished = false;
 
     public Main() {
-        createRooms();
-        createCharacters();
-        createObjects();
-        createTrades();
         parser = new Parser();
         gui = new GUI();
         URL url = getClass().getResource("/game/music/background.mp3");
         System.out.println(url);
 
+    }
+
+    public void newGame() {
+        createRooms();
+        createCharacters();
+        createObjects();
+        createTrades();
+        printWelcome();
     }
 
     public static Main getGame() {
@@ -47,8 +54,6 @@ public class Main {
     public Player getPlayer() {
         return player;
     }
-
-
 
     private void createTrades() {
         ((CanTrade) tightFist).setItemWantedName("Drink Voucher");
@@ -62,7 +67,7 @@ public class Main {
 
     public void createObjects() {
         // Consumables
-        pint = new Consumable("Pint", "A creamy pint of Guinness", pubFront, Effect.LANGERS);
+        pint = new Consumable("Pint", "A creamy pint of Guinness", rooms.get("pubFront"), Effect.LANGERS);
 
         // Weapons
         stick = new Weapon("Stick", "A pointy stick", turfMinion1, 20);
@@ -78,114 +83,125 @@ public class Main {
         sparkPlug = new Part("Spark Plug", "A spark plug for your car", tightFist);
 
         // Misc
-        match = new Item("Soggy Match", "Could still be used if you're determined enough", cave);
+        match = new Item("Soggy Match", "Could still be used if you're determined enough", rooms.get("cave"));
     }
 
     private void createRooms() {
-        // create rooms
-        postOffice = new Room("Post Office", "inside the town's small post office");
-        mainstreet = new Room("game.Main Street", "walking along the town's main street");
-        church = new Room("Church", "standing inside a quiet stone church");
-        pubFront = new Room("Pub Front", "at the lively front of the pub");
-        pubBack = new Room("Pub Back", "in the dim back room of the pub");
-        townSquare = new Room("Town Square", "in the town square with its central fountain");
-        farm = new Room("Town Hall", "inside the town hall with tall pillars");
-        shop = new Room("Shop", "in the general shop full of supplies");
-        park = new Room("Park", "in the peaceful green park");
-        estate = new Room("Estate", "on the grounds of an old estate");
-        cave = new Room("Cave", "inside a dark echoing cave");
-        bog = new Room("Abandoned Cottage", "in a bog land.");
-        river = new Room("River", "beside a flowing river and footbridge");
-        forest = new Room("Forest", "within a dense, towering forest");
 
+        String[] roomIds = {
+                "postOffice",
+                "mainStreet",
+                "church",
+                "pubFront",
+                "pubBack",
+                "townSquare",
+                "farm",
+                "shop",
+                "park",
+                "estate",
+                "cave",
+                "bog",
+                "river",
+                "forest",
+                "heaven"
+        };
 
-        // Set Exits
-        postOffice.setExit(Character.Direction.SOUTH, mainstreet);
-        mainstreet.setExit(Character.Direction.NORTH, postOffice);
+        for (String id : roomIds) {
+            rooms.put(id, new Room(id));
+        }
 
-        mainstreet.setExit(Character.Direction.WEST, church);
-        church.setExit(Character.Direction.EAST, mainstreet);
+        rooms.get("postOffice").addExit(Direction.SOUTH, "mainStreet");
 
-        mainstreet.setExit(Character.Direction.SOUTH, townSquare);
-        townSquare.setExit(Character.Direction.NORTH, mainstreet);
+        rooms.get("mainStreet").addExit(Direction.NORTH, "postOffice");
+        rooms.get("mainStreet").addExit(Direction.WEST, "church");
+        rooms.get("mainStreet").addExit(Direction.SOUTH, "townSquare");
+        rooms.get("mainStreet").addExit(Direction.EAST, "pubFront");
 
-        mainstreet.setExit(Character.Direction.EAST, pubFront);
-        pubFront.setExit(Character.Direction.WEST, mainstreet);
+        rooms.get("church").addExit(Direction.EAST, "mainStreet");
 
-        pubFront.setExit(Character.Direction.EAST, pubBack);
-        pubBack.setExit(Character.Direction.WEST, pubFront);
+        rooms.get("pubFront").addExit(Direction.WEST, "mainStreet");
+        rooms.get("pubFront").addExit(Direction.EAST, "pubBack");
 
-        townSquare.setExit(Character.Direction.WEST, farm);
-        farm.setExit(Character.Direction.EAST, townSquare);
+        rooms.get("pubBack").addExit(Direction.WEST, "pubFront");
 
-        townSquare.setExit(Character.Direction.EAST, shop);
-        shop.setExit(Character.Direction.WEST, townSquare);
+        rooms.get("townSquare").addExit(Direction.NORTH, "mainStreet");
+        rooms.get("townSquare").addExit(Direction.WEST, "farm");
+        rooms.get("townSquare").addExit(Direction.EAST, "shop");
+        rooms.get("townSquare").addExit(Direction.SOUTH, "park");
 
-        townSquare.setExit(Character.Direction.SOUTH, park);
-        park.setExit(Character.Direction.NORTH, townSquare);
+        rooms.get("farm").addExit(Direction.EAST, "townSquare");
 
-        park.setExit(Character.Direction.WEST, estate);
-        estate.setExit(Character.Direction.EAST, park);
+        rooms.get("shop").addExit(Direction.WEST, "townSquare");
 
-        estate.setExit(Character.Direction.SOUTH, bog);
-        bog.setExit(Character.Direction.NORTH, estate);
+        rooms.get("park").addExit(Direction.NORTH, "townSquare");
+        rooms.get("park").addExit(Direction.WEST, "estate");
+        rooms.get("park").addExit(Direction.SOUTH, "river");
+        rooms.get("park").addExit(Direction.EAST, "cave");
 
-        park.setExit(Character.Direction.SOUTH, river);
-        river.setExit(Character.Direction.NORTH, park);
+        rooms.get("estate").addExit(Direction.EAST, "park");
+        rooms.get("estate").addExit(Direction.SOUTH, "bog");
 
-        park.setExit(Character.Direction.EAST, cave);
-        cave.setExit(Character.Direction.WEST, park);
+        rooms.get("bog").addExit(Direction.NORTH, "estate");
 
-        cave.setExit(Character.Direction.SOUTH, forest);
-        forest.setExit(Character.Direction.NORTH, cave);
+        rooms.get("river").addExit(Direction.NORTH, "park");
+        rooms.get("river").addExit(Direction.EAST, "forest");
 
-        river.setExit(Character.Direction.EAST, forest);
-        forest.setExit(Character.Direction.WEST, river);
+        rooms.get("cave").addExit(Direction.WEST, "park");
+        rooms.get("cave").addExit(Direction.SOUTH, "forest");
+
+        rooms.get("forest").addExit(Direction.NORTH, "cave");
+        rooms.get("forest").addExit(Direction.WEST, "river");
+
+        for (Room r : rooms.values()) {
+            r.resolveExits(rooms);
+        }
+
     }
 
     public void createCharacters() {
 
-        player = new Player("player", townSquare, 100, 20);
+        player = new Player("player", rooms.get("townSquare"), 100, 20);
 
         // NPCS
-        oldMan = new OldMan("Old Man", townSquare, 100, 10, "old_man");
-        townSquare.addCharacter(oldMan);
+        oldMan = new OldMan("Old Man", rooms.get("townSquare"), 100, 10, "old_man");
+        rooms.get("townSquare").addCharacter(oldMan);
 
-        shopKeeper = new ShopKeeper("Shop Keeper", shop, 100000, 10000, "shopkeeper");
-        shop.addCharacter(shopKeeper);
+        shopKeeper = new ShopKeeper("Shop Keeper", rooms.get("shop"), 100000, 10000, "shopkeeper");
+        rooms.get("shop").addCharacter(shopKeeper);
 
-        turfKing = new TurfKing("Turf King", bog, 200, 5, "turf_king");
-        turfMinion1 = new TurfMinion("Turf Minion 1", bog, 50, 10, "The first stands wielding a stick.", "turf_minion", (TurfKing) turfKing);
-        turfMinion2 = new TurfMinion("Turf Minion 2", bog, 50, 10, "The second raises his fists as you approach.", "turf_minion", (TurfKing) turfKing);
-        bog.addCharacter(turfKing);
-        bog.addCharacter(turfMinion1);
-        bog.addCharacter(turfMinion2);
+        turfKing = new TurfKing("Turf King", rooms.get("bog"), 200, 5, "turf_king");
+        turfMinion1 = new TurfMinion("Turf Minion 1", rooms.get("bog"), 50, 10, "The first stands wielding a stick.", "turf_minion", (TurfKing) turfKing);
+        turfMinion2 = new TurfMinion("Turf Minion 2", rooms.get("bog"), 50, 10, "The second raises his fists as you approach.", "turf_minion", (TurfKing) turfKing);
+        rooms.get("bog").addCharacter(turfKing);
+        rooms.get("bog").addCharacter(turfMinion1);
+        rooms.get("bog").addCharacter(turfMinion2);
         
-        squirrel = new Squirrel("game.npc.Squirrel", forest);
-        forest.addCharacter(squirrel);
+        squirrel = new Squirrel("game.npc.Squirrel", rooms.get("forest"));
+        rooms.get("forest").addCharacter(squirrel);
 
-        tightFist = new TightFist("Tommy Tight Fist", pubFront, 150, 20, "A man sits at the bar with his hand tightly wrapped around your cars spark plug.", "tight_fist");
-        pubFront.addCharacter(tightFist);
+        tightFist = new TightFist("Tommy Tight Fist", rooms.get("pubFront"), 150, 20, "A man sits at the bar with his hand tightly wrapped around your cars spark plug.", "tight_fist");
+        rooms.get("pubFront").addCharacter(tightFist);
 
-        bigBollocks = new BigBollocks("Billy Big Bollocks", pubBack, 300, 15, "A man flexes his muscles at you as you walk in. He is wearing your car key on the chain around his neck.", "big_bollocks");
-        pubBack.addCharacter(bigBollocks);
+        bigBollocks = new BigBollocks("Billy Big Bollocks", rooms.get("pubBack"), 300, 15, "A man flexes his muscles at you as you walk in. He is wearing your car key on the chain around his neck.", "big_bollocks");
+        rooms.get("pubBack").addCharacter(bigBollocks);
 
-        farmer = new Farmer("game.npc.Farmer", farm, 170, 15, "A farmer is replacing a lantern with your cars headlights.", "farmer");
+        farmer = new Farmer("game.npc.Farmer", rooms.get("farm"), 170, 15, "A farmer is replacing a lantern with your cars headlights.", "farmer");
+        rooms.get("farm").addCharacter(farmer);
+
+        npcs.put("oldMan", oldMan);
+        npcs.put("turfKing", turfKing);
+        npcs.put("turfMinion1", turfMinion1);
+        npcs.put("turfMinion2", turfMinion2);
+        npcs.put("squirrel", squirrel);
+        npcs.put("tightFist", tightFist);
+        npcs.put("farmer", farmer);
+        npcs.put("bigBollocks", bigBollocks);
+        npcs.put("shopKeeper", shopKeeper);
     }
 
 
     public void play() {
-        printWelcome();
         gui.run();
-    }
-
-    private void savePlayer() {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("player.ser"))) {
-            out.writeObject(player);
-            outputController.addText("Saved");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void printWelcome() {
@@ -242,7 +258,7 @@ public class Main {
                 trade(command);
                 break;
             case "save":
-                savePlayer();
+                saveGame(command);
                 break;
             case "quit":
                 if (command.hasSecondWord()) {
@@ -256,6 +272,37 @@ public class Main {
                 break;
         }
         return false;
+    }
+
+    private void saveGame(Command command) {
+        if (!command.hasSecondWord()) {
+            outputController.addText("Enter save file name.");
+            return;
+        }
+
+        String fileName =  command.getSecondWord();
+
+        GameState gameState = new GameState(player, rooms, npcs);
+
+        SaveManager.saveGame(gameState, fileName);
+    }
+
+    public void loadGame(File file) {
+        GameState gameState = SaveManager.loadGame(file);
+
+        player = gameState.getPlayer();
+        rooms = gameState.getRooms();
+        npcs = gameState.getNpcs();
+
+        oldMan = npcs.get("oldMan");
+        turfKing = npcs.get("turfKing");
+        turfMinion1 = npcs.get("turfMinion1");
+        turfMinion2 = npcs.get("turfMinion2");
+        squirrel = npcs.get("squirrel");
+        tightFist = npcs.get("tightFist");
+        bigBollocks =  npcs.get("bigBollocks");
+        farmer = npcs.get("farmer");
+        shopKeeper = npcs.get("shopKeeper");
     }
 
     private void trade(Command command) {
@@ -302,7 +349,7 @@ public class Main {
     }
 
     private void buy(Command command) {
-        if (!player.getCurrentRoom().equals(shop)) {
+        if (!player.getCurrentRoom().equals(rooms.get("shop"))) {
             outputController.addText("You are not in the shop.");
             return;
         }
@@ -331,7 +378,7 @@ public class Main {
     }
 
     private void shop() {
-        if (player.getCurrentRoom().equals(shop)) {
+        if (player.getCurrentRoom().equals(rooms.get("shop"))) {
             outputController.addText("game.Item:\t\tPrice:");
             for (Item item : ((ShopKeeper) shopKeeper).getShopItems()) {
                 outputController.addText(item.getName() + "\t" + item.getValue());
@@ -342,7 +389,7 @@ public class Main {
     }
 
     private void drive(Command command) {
-        if (!player.getCurrentRoom().equals(townSquare)) {
+        if (!player.getCurrentRoom().equals(rooms.get("townSquare"))) {
             outputController.addText("Your car is in the town square.");
             return;
         }
@@ -379,7 +426,7 @@ public class Main {
                 break;
             }
             case Part part -> {
-                if (player.getCurrentRoom().equals(townSquare)) {
+                if (player.getCurrentRoom().equals(rooms.get("townSquare"))) {
                     Car.addPart(item);
                     outputController.addText("You put the " + item.getName() + " in your car.");
                 } else {
@@ -441,7 +488,7 @@ public class Main {
 
             if (opponent instanceof NPC) {
                 outputController.addText(opponent.getName() + ": " + ((NPC) opponent).getDeathMessage());
-                opponent.setCurrentRoom(heaven);
+                opponent.setCurrentRoom(rooms.get("heaven"));
             }
             outputController.addText(opponent.getName() + " has died.");
             player.getCurrentRoom().removeCharacter(opponent);
@@ -569,15 +616,15 @@ public class Main {
             return;
         }
 
-        Character.Direction direction;
+        Direction direction;
         directionStr = command.getSecondWord().toLowerCase();
 
         // Enhanced Switch
         direction = switch (directionStr) {
-            case "north" -> Character.Direction.NORTH;
-            case "south" -> Character.Direction.SOUTH;
-            case "east" -> Character.Direction.EAST;
-            case "west" -> Character.Direction.WEST;
+            case "north" -> Direction.NORTH;
+            case "south" -> Direction.SOUTH;
+            case "east" -> Direction.EAST;
+            case "west" -> Direction.WEST;
             default -> null;
         };
 
