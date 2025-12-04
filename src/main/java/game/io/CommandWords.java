@@ -50,11 +50,11 @@ public class CommandWords {
     }
 
     public void showAll() {
-        System.out.print("Valid commands are: ");
+        OutputController outputController = new OutputController();
+        outputController.addText("Valid commands are: \n");
         for (String command : validCommands.keySet()) {
-            System.out.print(command + " ");
+            outputController.addText(command + ": " + validCommands.get(command));
         }
-        System.out.println();
     }
 
     public static void removeWords() {

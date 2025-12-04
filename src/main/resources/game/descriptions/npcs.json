@@ -26,6 +26,9 @@
     },
     "farmer": {
       "description": "A tired farmer works by the barn, replacing a lantern with what is unmistakably your car’s headlights."
+    },
+    "postman": {
+      "description": "A weary postman stands beside his bicycle, sorting letters with the look of a man who’s seen every corner of the town twice already today."
     }
   }
 }

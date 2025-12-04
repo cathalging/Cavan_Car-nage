@@ -7,7 +7,7 @@ public class TightFist extends NPC implements CanTrade {
     protected Item itemOffered;
     protected String itemWantedName;
 
-    public TightFist(String name, Room startingRoom, int health, int damage, String description, String fileName) {
+    public TightFist(String name, Room startingRoom, int health, int damage, String fileName) {
         super(name, startingRoom, health, damage, fileName);
         this.description = description;
     }

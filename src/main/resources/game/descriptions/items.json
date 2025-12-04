@@ -39,6 +39,10 @@
     "drink voucher": {
       "roomDescription": "a crumpled drink voucher lying on the floor",
       "inventoryDescription": "A slightly torn voucher guaranteeing one free drink at the pub."
+    },
+    "stamp": {
+      "roomDescription": "a small postage stamp stuck to the ground",
+      "inventoryDescription": "A slightly creased postage stamp, still usable if you’re desperate."
     }
   }
 }

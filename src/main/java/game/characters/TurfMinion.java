@@ -6,7 +6,7 @@ public class TurfMinion extends NPC {
     String description;
     TurfKing king;
 
-    public TurfMinion(String name, Room startingRoom, int health, int damage, String description, String fileName, TurfKing king) {
+    public TurfMinion(String name, Room startingRoom, int health, int damage, String fileName, TurfKing king) {
         super(name, startingRoom, health, damage, fileName);
         this.description = description;
         this.king = king;

@@ -1,0 +1,17 @@
+{
+  "neutral": [
+    "Another day, another mountain of letters. Don’t suppose you want a job?",
+    "Routes never change, but the complaints always do.",
+    "If you’re looking for excitement, trust me—this isn’t the career."
+  ],
+  "angry": [
+    "If one more person asks where their parcel is, I swear—!",
+    "Do I look like I magically know where every lost letter goes?",
+    "Walk a mile in my shoes and see how cheerful you feel delivering bills all day."
+  ],
+  "happy": [
+    "Finally got a route where the dogs don’t chase me—grand day!",
+    "Nothing like a smooth cycle and a light bag to lift the spirits.",
+    "Ah, a friendly face! Makes the whole round feel shorter."
+  ]
+}

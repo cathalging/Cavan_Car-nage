@@ -26,7 +26,7 @@ public class Main {
     private Player player;
     private Map<String, Room> rooms = new HashMap<>();
     private Map<String, NPC> npcs = new HashMap<>();
-    private NPC oldMan, shopKeeper, turfKing, turfMinion1, turfMinion2, squirrel, tightFist, bigBollocks, farmer;
+    private NPC oldMan, shopKeeper, turfKing, turfMinion1, turfMinion2, squirrel, tightFist, bigBollocks, farmer, postman;
 
     private Item match;
     private Consumable pint;
@@ -70,6 +70,7 @@ public class Main {
         ((CanTrade) tightFist).setItemWantedName("Drink Voucher");
         ((CanTrade) squirrel).setItemWantedName("Nuts");
         ((CanTrade) farmer).setItemWantedName("Soggy Match");
+        ((CanTrade) postman).setItemWantedName("Stamp");
 
         ((CanTrade) squirrel).setItemOffered(new Item("Drink Voucher", squirrel));
         ((CanTrade) tightFist).setItemOffered(sparkPlug);
@@ -95,6 +96,10 @@ public class Main {
 
         // Misc
         match = new Item("Soggy Match", rooms.get("cave"));
+
+        new Item("Stamp", rooms.get("pubBack"));
+        new Item("Stamp", rooms.get("estate"));
+        new Item("Stamp", rooms.get("park"));
     }
 
     private void createRooms() {
@@ -181,23 +186,26 @@ public class Main {
         rooms.get("shop").add(shopKeeper);
 
         turfKing = new TurfKing("Turf King", rooms.get("bog"), 200, 5, "turf_king");
-        turfMinion1 = new TurfMinion("Turf Minion 1", rooms.get("bog"), 50, 10, "The first stands wielding a stick.", "turf_minion", (TurfKing) turfKing);
-        turfMinion2 = new TurfMinion("Turf Minion 2", rooms.get("bog"), 50, 10, "The second raises his fists as you approach.", "turf_minion", (TurfKing) turfKing);
+        turfMinion1 = new TurfMinion("Turf Minion 1", rooms.get("bog"), 50, 10, "turf_minion", (TurfKing) turfKing);
+        turfMinion2 = new TurfMinion("Turf Minion 2", rooms.get("bog"), 50, 10, "turf_minion", (TurfKing) turfKing);
         rooms.get("bog").add(turfKing);
         rooms.get("bog").add(turfMinion1);
         rooms.get("bog").add(turfMinion2);
-        
+
         squirrel = new Squirrel("game.npc.Squirrel", rooms.get("forest"));
         rooms.get("forest").add(squirrel);
 
-        tightFist = new TightFist("Tommy Tight Fist", rooms.get("pubFront"), 150, 20, "A man sits at the bar with his hand tightly wrapped around your cars spark plug.", "tight_fist");
+        tightFist = new TightFist("Tommy Tight Fist", rooms.get("pubFront"), 150, 20, "tight_fist");
         rooms.get("pubFront").add(tightFist);
 
-        bigBollocks = new BigBollocks("Billy Big Bollocks", rooms.get("pubBack"), 300, 15, "A man flexes his muscles at you as you walk in. He is wearing your car key on the chain around his neck.", "big_bollocks");
+        bigBollocks = new BigBollocks("Billy Big Bollocks", rooms.get("pubBack"), 300, 15, "big_bollocks");
         rooms.get("pubBack").add(bigBollocks);
 
-        farmer = new Farmer("Farmer", rooms.get("farm"), 170, 15, "A farmer is replacing a lantern with your cars headlights.", "farmer");
+        farmer = new Farmer("Farmer", rooms.get("farm"), 170, 15, "farmer");
         rooms.get("farm").add(farmer);
+
+        postman = new Postman("Postman", rooms.get("postOffice"), 1000, 100, "postman");
+        rooms.get("postOffice").add(postman);
 
         npcs.put("oldMan", oldMan);
         npcs.put("turfKing", turfKing);
@@ -292,7 +300,7 @@ public class Main {
             return;
         }
 
-        String fileName =  command.getSecondWord();
+        String fileName = command.getSecondWord();
 
         GameState gameState = new GameState(player, rooms, npcs);
 
@@ -312,7 +320,7 @@ public class Main {
         turfMinion2 = npcs.get("turfMinion2");
         squirrel = npcs.get("squirrel");
         tightFist = npcs.get("tightFist");
-        bigBollocks =  npcs.get("bigBollocks");
+        bigBollocks = npcs.get("bigBollocks");
         farmer = npcs.get("farmer");
         shopKeeper = npcs.get("shopKeeper");
     }
@@ -351,11 +359,18 @@ public class Main {
             return;
         }
 
+
         if (trader.getItemWantedName().equalsIgnoreCase(itemName)) {
-            player.removeInventoryItem(tradeItem);
-            player.addInventoryItem(trader.getItemOffered());
-            outputController.addText("You traded " + tradeItem.getName() + " for " + trader.getItemOffered().getName());
-            return;
+            if (trader instanceof Postman) {
+                player.setMoney(player.getMoney() + 5);
+                outputController.addText("You traded a stamp for 5 euro.");
+                return;
+            } else {
+                player.removeInventoryItem(tradeItem);
+                player.addInventoryItem(trader.getItemOffered());
+                outputController.addText("You traded " + tradeItem.getName() + " for " + trader.getItemOffered().getName());
+                return;
+            }
         }
         outputController.addText("The item you offered is not wanted.");
     }
@@ -403,7 +418,7 @@ public class Main {
     private void drive(Command command) {
         boolean win = false;
         if (command.hasSecondWord()) {
-            if (command.getCommandWord().equalsIgnoreCase("now")) {
+            if (command.getSecondWord().equalsIgnoreCase("now")) {
                 win = true;
             }
         } else {
@@ -525,7 +540,8 @@ public class Main {
 
         if (player.getHealth() <= 0) {
             outputController.addText("You have died.");
-            finished = true;
+            CommandWords.removeWords();
+            outputController.addText("Enter quit to exit the game.");
         }
     }
 
@@ -584,6 +600,8 @@ public class Main {
         for (Item item : items.toArray(new Item[0])) {
             outputController.addText(item.getName() + ":\n" + item.getRoomDescription());
         }
+
+        outputController.addText("\nMoney: " + player.getMoney());
     }
 
     private void placeItem(Command command) {
@@ -628,9 +646,7 @@ public class Main {
     }
 
     private void printHelp() {
-        System.out.print("Your command words are: ");
         parser.showCommands();
-        System.out.println();
     }
 
     private void goRoom(Command command, Character character) {

@@ -3,24 +3,18 @@ package game.characters;
 import game.items.Item;
 import game.rooms.Room;
 
-public class Farmer extends NPC implements CanTrade {
-    String itemWantedName;
-    Item itemOffered;
+public class Postman extends NPC implements CanTrade {
+    private String itemWantedString;
+    private Item itemOffered;
 
-    public Farmer(String name, Room startingRoom, int health, int damage, String fileName) {
-        super(name, startingRoom, health, damage, fileName);
-        this.description = description;
+    public Postman(String name, Room startingRoom, int health, int damage, String dialoguePath, Item... items) {
+            super(name, startingRoom, health, damage, dialoguePath, items);
     }
 
     @Override
     public void onDeath() {
 
     }
-
-
-
-
-
 
     @Override
     public String getDeathMessage() {
@@ -34,7 +28,7 @@ public class Farmer extends NPC implements CanTrade {
 
     @Override
     public void setItemWantedName(String itemWantedName) {
-        this.itemWantedName = itemWantedName;
+        this.itemWantedString = itemWantedName;
     }
 
     @Override
@@ -44,11 +38,11 @@ public class Farmer extends NPC implements CanTrade {
 
     @Override
     public String getItemWantedName() {
-        return this.itemWantedName;
+        return itemWantedString;
     }
 
     @Override
     public Item getItemOffered() {
-        return this.itemOffered;
+        return itemOffered;
     }
 }
