@@ -1,0 +1,31 @@
+{
+  "npcs": {
+    "old man": {
+      "description": "An old man stands on the footpath, watching the square with a distant, unfocused gaze."
+    },
+    "shop Keeper": {
+      "description": "The shop keeper stands behind the counter, eyeing you like every coin in your pocket already belongs to him."
+    },
+    "turf king": {
+      "description": "The Turf King stands ankle-deep in the muck, surveying the bog as if it were his personal kingdom."
+    },
+    "turf minion 1": {
+      "description": "A wiry minion stands beside the Turf King, gripping a stick like he’s itching to use it."
+    },
+    "turf minion 2": {
+      "description": "A heavier minion squares up as you enter, his fists already raised in anticipation."
+    },
+    "squirrel": {
+      "description": "A jittery squirrel scurries across the forest floor, pausing only long enough to glare at you."
+    },
+    "tommy tight fist": {
+      "description": "Tommy Tight Fist sits hunched at the bar, clutching your car’s spark plug in a white-knuckle grip."
+    },
+    "billy big bollocks": {
+      "description": "Billy Big Bollocks stands in the shadows flexing proudly, your car key dangling from the chain around his neck."
+    },
+    "farmer": {
+      "description": "A tired farmer works by the barn, replacing a lantern with what is unmistakably your car’s headlights."
+    }
+  }
+}

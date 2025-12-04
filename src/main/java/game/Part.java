@@ -3,11 +3,11 @@ package game;
 import game.characters.Character;
 
 public class Part extends Item{
-    public Part(String name, String Description, Room room) {
-        super(name, Description, room);
+    public Part(String name, Room room) {
+        super(name, room);
     }
 
-    public Part(String name, String description, Character character) {
-        super(name, description, character);
+    public Part(String name, Character character) {
+        super(name, character);
     }
 }

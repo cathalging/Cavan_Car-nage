@@ -1,0 +1,44 @@
+{
+  "items": {
+    "stick": {
+      "roomDescription": "a weathered stick lying on the ground",
+      "inventoryDescription": "A rough wooden stick, light and easy to swing."
+    },
+    "pint": {
+      "roomDescription": "a half-finished pint sitting unattended",
+      "inventoryDescription": "A warm pint of beer sloshing gently in the glass."
+    },
+    "engine oil": {
+      "roomDescription": "a dusty bottle of engine oil resting nearby",
+      "inventoryDescription": "A bottle of thick engine oil, still sealed and usable."
+    },
+    "nuts": {
+      "roomDescription": "a small pile of metal nuts scattered on the floor",
+      "inventoryDescription": "A handful of sturdy metal nuts, all different sizes."
+    },
+    "soggy match": {
+      "roomDescription": "a soggy match stick lying uselessly on the ground",
+      "inventoryDescription": "A damp match stick that looks like it will never light."
+    },
+    "wheels": {
+      "roomDescription": "a pair of loose wheels propped up against something",
+      "inventoryDescription": "A set of wheels in decent condition, ready to be fitted."
+    },
+    "headlights": {
+      "roomDescription": "a set of old headlights placed down carelessly",
+      "inventoryDescription": "A pair of scratched but working headlights."
+    },
+    "keys": {
+      "roomDescription": "a set of keys glinting faintly where they were dropped",
+      "inventoryDescription": "A small metal keyring holding several worn keys."
+    },
+    "spark plug": {
+      "roomDescription": "a spark plug tossed aside on the ground",
+      "inventoryDescription": "A slightly used spark plug that still looks functional."
+    },
+    "drink voucher": {
+      "roomDescription": "a crumpled drink voucher lying on the floor",
+      "inventoryDescription": "A slightly torn voucher guaranteeing one free drink at the pub."
+    }
+  }
+}

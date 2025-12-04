@@ -9,11 +9,6 @@ public class BigBollocks extends NPC {
     }
 
     @Override
-    public String getDescription() {
-        return "";
-    }
-
-    @Override
     public void onDeath() {
         dropInventory();
     }

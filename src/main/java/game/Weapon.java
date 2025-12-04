@@ -6,8 +6,8 @@ import game.characters.Character;
 public class Weapon extends Item {
     private int damage;
 
-    public Weapon(String name, String description, Character character, int damage) {
-        super(name, description, character);
+    public Weapon(String name, Character character, int damage) {
+        super(name, character);
         this.damage = damage;
     }
 

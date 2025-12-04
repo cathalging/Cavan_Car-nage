@@ -30,11 +30,6 @@ public class ShopKeeper extends NPC {
     }
 
     @Override
-    public String getDescription() {
-        return "";
-    }
-
-    @Override
     public void onDeath() {
 
     }

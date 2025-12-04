@@ -9,13 +9,6 @@ public class OldMan extends NPC {
     }
 
     @Override
-    public String getDescription() {
-        return "An old man stands on the footpath.";
-    }
-
-
-
-    @Override
     public void onDeath() {
         dropInventory();
     }

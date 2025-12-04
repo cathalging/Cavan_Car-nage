@@ -14,11 +14,6 @@ public class Squirrel extends NPC implements CanTrade {
     }
 
     @Override
-    public String getDescription() {
-        return "A squirrel stands at the base of the tree in front of you. It clutches a drink voucher";
-    }
-
-    @Override
     public void onDeath() {
         outputController.addText("The squirrel ran away with the ");
     }

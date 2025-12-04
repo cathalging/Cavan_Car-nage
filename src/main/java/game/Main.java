@@ -60,30 +60,30 @@ public class Main {
         ((CanTrade) squirrel).setItemWantedName("Nuts");
         ((CanTrade) farmer).setItemWantedName("Soggy Match");
 
-        ((CanTrade) squirrel).setItemOffered(new Item("Drink Voucher", "A drink voucher for the local pub", squirrel));
+        ((CanTrade) squirrel).setItemOffered(new Item("Drink Voucher", squirrel));
         ((CanTrade) tightFist).setItemOffered(sparkPlug);
         ((CanTrade) farmer).setItemOffered(headlights);
     }
 
     public void createObjects() {
         // Consumables
-        pint = new Consumable("Pint", "A creamy pint of Guinness", rooms.get("pubFront"), Effect.LANGERS);
+        pint = new Consumable("Pint", rooms.get("pubFront"), Effect.LANGERS);
 
         // Weapons
-        stick = new Weapon("Stick", "A pointy stick", turfMinion1, 20);
+        stick = new Weapon("Stick", turfMinion1, 20);
 
         // Shop Items
-        shopController.addShopItems(new Item("Engine Oil", "A bottle of engine oil from 1977", 5),
-                new Item("Nuts", "Roasted Peanuts", 2));
+        shopController.addShopItems(new Item("Engine Oil", 5),
+                new Item("Nuts", 2));
 
         // Parts
-        keys = new Part("Keys", "The keys to your car", bigBollocks);
-        wheels = new Part("Wheels", "The wheels on your car go around and around", turfKing);
-        headlights = new Part("Headlights", "The headlights for your car", farmer);
-        sparkPlug = new Part("Spark Plug", "A spark plug for your car", tightFist);
+        keys = new Part("Keys", bigBollocks);
+        wheels = new Part("Wheels", turfKing);
+        headlights = new Part("Headlights", farmer);
+        sparkPlug = new Part("Spark Plug", tightFist);
 
         // Misc
-        match = new Item("Soggy Match", "Could still be used if you're determined enough", rooms.get("cave"));
+        match = new Item("Soggy Match", rooms.get("cave"));
     }
 
     private void createRooms() {
@@ -185,7 +185,7 @@ public class Main {
         bigBollocks = new BigBollocks("Billy Big Bollocks", rooms.get("pubBack"), 300, 15, "A man flexes his muscles at you as you walk in. He is wearing your car key on the chain around his neck.", "big_bollocks");
         rooms.get("pubBack").addCharacter(bigBollocks);
 
-        farmer = new Farmer("game.npc.Farmer", rooms.get("farm"), 170, 15, "A farmer is replacing a lantern with your cars headlights.", "farmer");
+        farmer = new Farmer("Farmer", rooms.get("farm"), 170, 15, "A farmer is replacing a lantern with your cars headlights.", "farmer");
         rooms.get("farm").addCharacter(farmer);
 
         npcs.put("oldMan", oldMan);
@@ -557,7 +557,7 @@ public class Main {
         ArrayList<Item> items = player.getInventory();
         outputController.addText("Inventory:");
         for (Item item : items.toArray(new Item[0])) {
-            outputController.addText(item.getName() + ":\n" + item.getDescription());
+            outputController.addText(item.getName() + ":\n" + item.getRoomDescription());
         }
     }
 
@@ -575,7 +575,7 @@ public class Main {
             if (item.getName().equalsIgnoreCase(itemName)) {
                 player.removeInventoryItem(item);
                 currentRoom.addItem(item);
-                outputController.addText("The " + itemName + " was placed " + currentRoom.getDescription());
+                outputController.addText("The " + itemName + " was placed");
                 return;
             }
         }

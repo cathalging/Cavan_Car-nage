@@ -1,7 +1,11 @@
 package game;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import game.characters.NPC;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +25,7 @@ public class Room implements Serializable {
     public Room(String name) {
         this.name = name;
         this.exitIds = new HashMap<>();
+        loadDescription();
     }
 
     public void addItem(Item item) {
@@ -47,10 +52,6 @@ public class Room implements Serializable {
         return items;
     }
 
-    public String getDescription() {
-        return longDescription;
-    }
-
     public void addExit(Direction direction, String neighborName) {
         exitIds.put(direction, neighborName);
     }
@@ -68,17 +69,47 @@ public class Room implements Serializable {
 
     public String getExitString() {
         StringBuilder sb = new StringBuilder();
-        for (Direction direction : exitIds.keySet()) {
-            sb.append(direction).append(" ");
+        for (Direction direction: exits.keySet()) {
+            sb.append("\nIn the ").append(direction.name()).append(", ");
+            sb.append(exits.get(direction).getShortDescription().toLowerCase()).append("\n");
         }
-        return sb.toString().trim();
+        return sb.toString();
+    }
+
+    public void loadDescription() {
+        JsonNode roomsNode;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            InputStream in = getClass().getClassLoader()
+                    .getResourceAsStream("game/descriptions/rooms.json");
+
+            if (in == null) {
+                throw new FileNotFoundException("rooms.json not found on classpath");
+            }
+
+            JsonNode root = mapper.readTree(in);
+            roomsNode = root.get("rooms");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        JsonNode section = roomsNode.get(name);
+
+        if (section != null) {
+            longDescription = section.get("longDesc").asText();
+        shortDescription = section.get("shortDesc").asText();
+        } else {
+            System.err.println("Room not found in JSON: " + name);
+        }
     }
 
     public String getLongDescription() {
-        StringBuilder msg = new StringBuilder("You are " + longDescription + "\n");
+        StringBuilder msg = new StringBuilder(longDescription + "\n");
         if (!items.isEmpty()) {
             for (Item item : items) {
-                msg.append(item.getDescription() + "\n");
+                msg.append(item.getRoomDescription() + "\n");
             }
         }
         if (!characters.isEmpty()) {
@@ -89,7 +120,11 @@ public class Room implements Serializable {
                     }
             }
         }
-        msg.append("\nExits:\n" + getExitString());
+        msg.append(getExitString());
         return msg.toString();
+    }
+
+    public String getShortDescription() {
+        return shortDescription;
     }
 }

@@ -1,0 +1,64 @@
+{
+  "rooms": {
+    "postOffice": {
+      "shortDesc": "There is a small post office with dusty shelves and faded posters.",
+      "longDesc": "You are in a cramped post office filled with faded posters and dusty shelves. A single flickering light buzzes overhead as envelopes are stacked haphazardly behind the counter. The air smells of old paper and forgotten letters."
+    },
+    "mainStreet": {
+      "shortDesc": "There is a long, cracked main street lined with quiet shopfronts.",
+      "longDesc": "You are in the centre of a busy main street, though many of the shops’ windows are dark and empty. The wind carries scraps of old flyers along the cracked pavement. You feel the faint echo of a town that used to be livelier."
+    },
+    "church": {
+      "shortDesc": "There is an old church with creaking pews and soft light.",
+      "longDesc": "You stand inside a quiet church where dust dances in beams of pale light. Wooden pews creak softly as if holding memories of long-gone crowds. The air is cool, still, and faintly scented with incense."
+    },
+    "pubFront": {
+      "shortDesc": "There is a worn pub entrance with a swaying sign.",
+      "longDesc": "You are in front of an old pub with peeling paint and a hanging sign that sways lazily in the breeze. Muffled voices and clinking glasses leak through the door. The scent of stale beer lingers in the air."
+    },
+    "pubBack": {
+      "shortDesc": "There is a cluttered back room filled with crates and empty kegs.",
+      "longDesc": "You are in the back room of the pub, where crates, barrels, and empty kegs are stacked in uneven piles. The smell of spilled beer clings to the wooden floor. A faint hum from the main bar filters through the thin walls."
+    },
+    "townSquare": {
+      "shortDesc": "There is a wide, empty town square with a cracked fountain.",
+      "longDesc": "You stand in the town square, a wide open space surrounded by aging buildings. A dry, cracked fountain sits at the centre like a relic of better days. The wind whistles through the empty benches and abandoned stalls."
+    },
+    "farm": {
+      "shortDesc": "There is a rundown farmyard with sagging fences and an old barn.",
+      "longDesc": "You are in a weathered farmyard with broken fences and fields stretching into the distance. The smell of hay mixes with damp earth. A dilapidated barn leans to one side as if tired from years of work."
+    },
+    "shop": {
+      "shortDesc": "There is a dusty little shop filled with old goods.",
+      "longDesc": "You are inside a dim shop packed with dusty shelves and long-forgotten goods. A lone counter stands at the back, covered in old receipts and cracked glass jars. The air feels stale, as though the door hasn’t been opened in years."
+    },
+    "park": {
+      "shortDesc": "There is an overgrown park with rusted swings.",
+      "longDesc": "You stand in an overgrown park where grass climbs over crumbling pathways. Rusted swings creak weakly in the breeze. Birds scatter from the trees as the quiet settles around you."
+    },
+    "estate": {
+      "shortDesc": "There is a sprawling old estate with wild, overgrown gardens.",
+      "longDesc": "You are in a once-grand estate with tall iron gates and a manor looming in the background. The gardens are wild, reclaiming the paths and statues that once stood proudly. A cold, unsettling stillness hangs over the grounds."
+    },
+    "cave": {
+      "shortDesc": "There is a dark, echoing cave entrance.",
+      "longDesc": "You stand at the mouth of a dark cave where cool air spills out like a warning. Moisture clings to the rocky walls, and distant drips echo from somewhere deep inside. Shadows twist in every corner as your eyes adjust."
+    },
+    "bog": {
+      "shortDesc": "There is a misty bog with unstable, muddy ground.",
+      "longDesc": "You are in a murky bog where wet soil squelches under your feet. Mist curls around twisted shrubs and stagnant pools of water. Each step feels uncertain, as if the ground might swallow you whole."
+    },
+    "river": {
+      "shortDesc": "There is a fast, restless river cutting through the area.",
+      "longDesc": "You stand beside a fast-flowing river that cuts through the landscape like a silver blade. The rush of water fills your ears as droplets spray into the cool air. Smooth stones along the bank glisten under the shifting light."
+    },
+    "forest": {
+      "shortDesc": "There is a dark forest crowded with towering trees.",
+      "longDesc": "You are in a dense forest where towering trees block out most of the light. Leaves whisper overhead as something rustles in the undergrowth. The air is rich with the scent of moss, bark, and damp earth."
+    },
+    "heaven": {
+      "shortDesc": "There is a bright, serene place filled with soft light.",
+      "longDesc": "You stand in a radiant expanse of soft light and endless sky. The air feels weightless, warm, and impossibly calm. Gentle clouds drift beneath your feet as if the world itself has turned serene and silent."
+    }
+  }
+}

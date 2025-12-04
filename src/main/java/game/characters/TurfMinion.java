@@ -13,11 +13,6 @@ public class TurfMinion extends NPC {
     }
 
     @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
     public void onDeath() {
 
     }

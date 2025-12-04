@@ -13,11 +13,6 @@ public class Farmer extends NPC implements CanTrade {
     }
 
     @Override
-    public String getDescription() {
-        return "";
-    }
-
-    @Override
     public void onDeath() {
 
     }
