@@ -17,11 +17,6 @@ public class Farmer extends NPC implements CanTrade {
 
     }
 
-
-
-
-
-
     @Override
     public String getDeathMessage() {
         return "";

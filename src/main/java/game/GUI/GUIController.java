@@ -35,6 +35,8 @@ public class GUIController {
     private final Main game = Main.getGame();
     private final Player player = game.getPlayer();
 
+    static int refreshes = 0;
+
     @FXML
     public void initialize() {
         inputField.setOnAction(e -> {
@@ -80,6 +82,12 @@ public class GUIController {
 
     private void refresh() {
         textArea.setText(outputController.getText());
+
+        if (refreshes >= 1)
+            textArea.positionCaret(textArea.getText().length());
+
+        refreshes++;
+
 
         // Character Box
         charactersBox.getChildren().clear();
