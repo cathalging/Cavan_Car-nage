@@ -1,5 +1,6 @@
-package game;
+package game.save;
 
+import game.rooms.Room;
 import game.characters.NPC;
 import game.characters.Player;
 

@@ -1,8 +1,10 @@
-package game;
+package game.rooms;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import game.characters.NPC;
+import game.characters.Character;
+import game.items.Item;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -16,7 +18,7 @@ public class Room implements Serializable {
     private String shortDescription;
     private String name;
 
-    private Map<Direction, String> exitIds; // Map direction to neighboring game.Room
+    private Map<Direction, String> exitIds; // Map direction to neighboring game.rooms.Room
     private HashMap<Direction, Room> exits;
 
     private ArrayList<Item> items = new ArrayList<>();
@@ -28,20 +30,20 @@ public class Room implements Serializable {
         loadDescription();
     }
 
-    public void addItem(Item item) {
-        items.add(item);
+    public <T> void add(T obj) {
+        if (obj instanceof Item item) {
+            items.add(item);
+        } else if (obj instanceof Character character) {
+            characters.add(character);
+        }
     }
 
-    public void removeItem(Item item) {
-        items.remove(item);
-    }
-
-    public void addCharacter(game.characters.Character character) {
-        characters.add(character);
-    }
-
-    public void removeCharacter(game.characters.Character character) {
-        characters.remove(character);
+    public <T> void remove(T obj) {
+        if (obj instanceof Item item) {
+            items.remove(item);
+        } else if (obj instanceof Character character) {
+            characters.remove(character);
+        }
     }
 
     public ArrayList<game.characters.Character> getCharacters() {

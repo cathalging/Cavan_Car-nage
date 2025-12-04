@@ -1,7 +1,7 @@
 package game.characters;
 
-import game.Item;
-import game.Room;
+import game.items.Item;
+import game.rooms.Room;
 
 public class TightFist extends NPC implements CanTrade {
     protected Item itemOffered;

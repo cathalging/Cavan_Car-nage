@@ -1,6 +1,5 @@
-package game;
+package game.items;
 
-import game.characters.*;
 import game.characters.Character;
 
 public class Weapon extends Item {

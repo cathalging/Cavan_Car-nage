@@ -1,4 +1,4 @@
-package game;
+package game.GUI;
 
 
 import javafx.scene.media.Media;

@@ -1,10 +1,10 @@
-package game;
+package game.io;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class CommandWords {
-    private Map<String, String> validCommands;
+    private static Map<String, String> validCommands;
 
     public CommandWords() {
         validCommands = new HashMap<>();
@@ -55,5 +55,10 @@ public class CommandWords {
             System.out.print(command + " ");
         }
         System.out.println();
+    }
+
+    public static void removeWords() {
+        validCommands.clear();
+        validCommands.put("quit", "Exit the game");
     }
 }

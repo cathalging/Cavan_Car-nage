@@ -1,7 +1,7 @@
 package game.characters;
 
-import game.Item;
-import game.Room;
+import game.items.Item;
+import game.rooms.Room;
 
 public class OldMan extends NPC {
     public OldMan(String name, Room startingRoom, int health, int damage, String fileName, Item... items) {

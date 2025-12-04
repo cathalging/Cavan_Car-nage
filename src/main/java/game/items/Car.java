@@ -1,4 +1,4 @@
-package game;
+package game.items;
 
 public class Car {
     static Item[] parts = new Item[4];

@@ -1,6 +1,6 @@
 package game.characters;
 
-import game.Room;
+import game.rooms.Room;
 
 public class TurfMinion extends NPC {
     String description;

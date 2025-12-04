@@ -1,7 +1,8 @@
-package game;
+package game.items;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import game.rooms.Room;
 import game.characters.Character;
 
 import java.io.FileNotFoundException;
@@ -17,7 +18,7 @@ public class Item implements Serializable {
     public Item(String name, Room location) {
         this.name = name;
         loadDescriptions();
-        location.addItem(this);
+        location.add(this);
     }
 
     public Item(String name, Character character) {

@@ -1,4 +1,4 @@
-package game;
+package game.io;
 
 public class Command {
     private String commandWord;

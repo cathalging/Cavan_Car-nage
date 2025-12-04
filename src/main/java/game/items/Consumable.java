@@ -1,5 +1,6 @@
-package game;
+package game.items;
 
+import game.rooms.Room;
 import game.characters.Effect;
 
 public class Consumable extends Item {

@@ -1,9 +1,9 @@
 package game.characters;
 
-import game.Direction;
-import game.Item;
-import game.OutputController;
-import game.Room;
+import game.rooms.Direction;
+import game.items.Item;
+import game.io.OutputController;
+import game.rooms.Room;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -110,7 +110,7 @@ public class Character implements Serializable {
     public void dropInventory() {
         for (Item item : inventory) {
             removeInventoryItem(item);
-            currentRoom.addItem(item);
+            currentRoom.add(item);
             break;
         }
     }

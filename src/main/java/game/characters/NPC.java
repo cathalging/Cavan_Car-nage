@@ -2,8 +2,8 @@ package game.characters;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import game.Item;
-import game.Room;
+import game.items.Item;
+import game.rooms.Room;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;

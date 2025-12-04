@@ -1,4 +1,6 @@
-package game;
+package game.save;
+
+import game.io.OutputController;
 
 import java.io.*;
 

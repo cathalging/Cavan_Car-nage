@@ -1,7 +1,12 @@
-package game;
+package game.GUI;
 
+import game.*;
 import game.characters.Character;
 import game.characters.*;
+import game.io.Command;
+import game.io.OutputController;
+import game.io.Parser;
+import game.items.Item;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;

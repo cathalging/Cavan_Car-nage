@@ -1,6 +1,6 @@
 package game.characters;
 
-import game.Item;
+import game.items.Item;
 
 public interface CanTrade {
     public void setItemWantedName(String itemWantedName);

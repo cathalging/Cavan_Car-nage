@@ -62,11 +62,9 @@ public class GUI extends Application {
     }
 }
 */
-package game;
+package game.GUI;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class GUI extends Application {

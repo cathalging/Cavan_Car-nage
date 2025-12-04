@@ -1,6 +1,6 @@
 package game.characters;
 
-import game.Room;
+import game.rooms.Room;
 
 public class TurfKing extends NPC {
 

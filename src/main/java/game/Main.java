@@ -1,8 +1,19 @@
 package game;
 
+import game.GUI.AudioManager;
+import game.GUI.GUI;
 import game.characters.*;
 import game.characters.Character;
 import game.characters.Effect;
+import game.io.Command;
+import game.io.CommandWords;
+import game.io.OutputController;
+import game.io.Parser;
+import game.items.*;
+import game.rooms.Direction;
+import game.rooms.Room;
+import game.save.GameState;
+import game.save.SaveManager;
 
 import java.io.*;
 import java.net.URL;
@@ -164,29 +175,29 @@ public class Main {
 
         // NPCS
         oldMan = new OldMan("Old Man", rooms.get("townSquare"), 100, 10, "old_man");
-        rooms.get("townSquare").addCharacter(oldMan);
+        rooms.get("townSquare").add(oldMan);
 
         shopKeeper = new ShopKeeper("Shop Keeper", rooms.get("shop"), 100000, 10000, "shopkeeper");
-        rooms.get("shop").addCharacter(shopKeeper);
+        rooms.get("shop").add(shopKeeper);
 
         turfKing = new TurfKing("Turf King", rooms.get("bog"), 200, 5, "turf_king");
         turfMinion1 = new TurfMinion("Turf Minion 1", rooms.get("bog"), 50, 10, "The first stands wielding a stick.", "turf_minion", (TurfKing) turfKing);
         turfMinion2 = new TurfMinion("Turf Minion 2", rooms.get("bog"), 50, 10, "The second raises his fists as you approach.", "turf_minion", (TurfKing) turfKing);
-        rooms.get("bog").addCharacter(turfKing);
-        rooms.get("bog").addCharacter(turfMinion1);
-        rooms.get("bog").addCharacter(turfMinion2);
+        rooms.get("bog").add(turfKing);
+        rooms.get("bog").add(turfMinion1);
+        rooms.get("bog").add(turfMinion2);
         
         squirrel = new Squirrel("game.npc.Squirrel", rooms.get("forest"));
-        rooms.get("forest").addCharacter(squirrel);
+        rooms.get("forest").add(squirrel);
 
         tightFist = new TightFist("Tommy Tight Fist", rooms.get("pubFront"), 150, 20, "A man sits at the bar with his hand tightly wrapped around your cars spark plug.", "tight_fist");
-        rooms.get("pubFront").addCharacter(tightFist);
+        rooms.get("pubFront").add(tightFist);
 
         bigBollocks = new BigBollocks("Billy Big Bollocks", rooms.get("pubBack"), 300, 15, "A man flexes his muscles at you as you walk in. He is wearing your car key on the chain around his neck.", "big_bollocks");
-        rooms.get("pubBack").addCharacter(bigBollocks);
+        rooms.get("pubBack").add(bigBollocks);
 
         farmer = new Farmer("Farmer", rooms.get("farm"), 170, 15, "A farmer is replacing a lantern with your cars headlights.", "farmer");
-        rooms.get("farm").addCharacter(farmer);
+        rooms.get("farm").add(farmer);
 
         npcs.put("oldMan", oldMan);
         npcs.put("turfKing", turfKing);
@@ -205,7 +216,8 @@ public class Main {
     }
 
     private void printWelcome() {
-        outputController.addText("Your car splutters to a stop in the middle of Cavan Town. You look at the dash and see a light to change engine oil. Thankfully you see a shop to the east.");
+        outputController.addText("You decide to pull over for a snooze in Cavan Town to break up your long journey home."
+                + "You close your eyes and have a brilliant sleep. You open them a short while late to find your car stripped of its headlights, wheels, keys and a spark plug.");
         outputController.addText(player.getCurrentRoom().getLongDescription());
     }
 
@@ -265,7 +277,7 @@ public class Main {
                     outputController.addText("Quit what?");
                     return false;
                 } else {
-                    return true; // signal to quit
+                    System.exit(0);
                 }
             default:
                 outputController.addText("I don't know what you mean...");
@@ -374,12 +386,12 @@ public class Main {
                 return;
             }
         }
-        outputController.addText("game.Item does not exist.");
+        outputController.addText("game.items.Item does not exist.");
     }
 
     private void shop() {
         if (player.getCurrentRoom().equals(rooms.get("shop"))) {
-            outputController.addText("game.Item:\t\tPrice:");
+            outputController.addText("game.items.Item:\t\tPrice:");
             for (Item item : ((ShopKeeper) shopKeeper).getShopItems()) {
                 outputController.addText(item.getName() + "\t" + item.getValue());
             }
@@ -389,15 +401,28 @@ public class Main {
     }
 
     private void drive(Command command) {
-        if (!player.getCurrentRoom().equals(rooms.get("townSquare"))) {
-            outputController.addText("Your car is in the town square.");
-            return;
+        boolean win = false;
+        if (command.hasSecondWord()) {
+            if (command.getCommandWord().equalsIgnoreCase("now")) {
+                win = true;
+            }
+        } else {
+            if (!player.getCurrentRoom().equals(rooms.get("townSquare"))) {
+                outputController.addText("Your car is in the town square.");
+                return;
+            }
+            if (!Car.fixed()) {
+                outputController.addText("Your car is still missing parts.");
+                return;
+            }
+            win = true;
         }
-        if (!Car.fixed()) {
-            outputController.addText("Your car is still missing parts.");
-            return;
+
+        if (win) {
+            outputController.addText("You start your car, and escape from Cavan. You win.\nType 'quit' to exit the game.");
+            CommandWords.removeWords();
         }
-        outputController.addText("You start your car, and escape from Cavan. You win.");
+
     }
 
     private void use(Command command) {
@@ -418,7 +443,7 @@ public class Main {
 
         switch (item) {
             case null -> {
-                outputController.addText("game.Item not found");
+                outputController.addText("game.items.Item not found");
                 break;
             }
             case Consumable consumable -> {
@@ -491,7 +516,7 @@ public class Main {
                 opponent.setCurrentRoom(rooms.get("heaven"));
             }
             outputController.addText(opponent.getName() + " has died.");
-            player.getCurrentRoom().removeCharacter(opponent);
+            player.getCurrentRoom().remove(opponent);
             return;
         }
 
@@ -550,7 +575,7 @@ public class Main {
                 return;
             }
         }
-        outputController.addText("game.Item not found.\n");
+        outputController.addText("game.items.Item not found.\n");
     }
 
     private void showInventory() {
@@ -574,12 +599,12 @@ public class Main {
         for (Item item : items) {
             if (item.getName().equalsIgnoreCase(itemName)) {
                 player.removeInventoryItem(item);
-                currentRoom.addItem(item);
+                currentRoom.add(item);
                 outputController.addText("The " + itemName + " was placed");
                 return;
             }
         }
-        outputController.addText("game.Item not found.");
+        outputController.addText("game.items.Item not found.");
     }
 
     private void takeItem(Command command) {
@@ -594,12 +619,12 @@ public class Main {
         for (Item item : items) {
             if (item.getName().equalsIgnoreCase(itemName)) {
                 player.addInventoryItem(item);
-                player.getCurrentRoom().removeItem(item);
+                player.getCurrentRoom().remove(item);
                 outputController.addText("You took the " + item.getName());
                 return;
             }
         }
-        outputController.addText("game.Item not found.");
+        outputController.addText("game.items.Item not found.");
     }
 
     private void printHelp() {
@@ -634,7 +659,7 @@ public class Main {
             character.move(direction);
             outputController.clearConsole();
 
-            // game.Room Info
+            // game.rooms.Room Info
             outputController.addText(character.getCurrentRoom().getLongDescription());
 
             // game.characters.Player Info
