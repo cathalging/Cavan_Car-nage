@@ -6,6 +6,8 @@ Overview
 
 Cavan Car-nage puts the player in the middle of a small-town mystery: vital car parts have been stolen, and you need to get them back. You’ll fight, negotiate, and solve puzzles as you work through a network of shady NPCs, traders, and troublemakers. Every choice influences how characters react and what paths open up.
 
+Type "help" for help
+
 Features
 
 Dynamic NPCs with different personalities, behaviours, and reactions
